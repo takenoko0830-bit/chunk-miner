@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chunk Miner">
+<meta name="theme-color" content="#0E1524">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+<title>Chunk Miner</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --ink:#0E1524; --panel:#162034; --line:#26324C; --paper:#F1EEE7; --muted:#8496B2;
+  --amber:#E9A63C; --amberdim:#4A3818; --green:#6FBF9A; --red:#D97B6C;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--ink);color:var(--paper);min-height:100%}
+body{font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;
+     padding:20px 20px calc(28px + env(safe-area-inset-bottom));max-width:1080px;margin:0 auto;
+     -webkit-text-size-adjust:100%}
+
+.head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.brand{font-size:12px;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.tabs{display:flex;gap:2px;background:var(--panel);border-radius:999px;padding:3px;flex-wrap:wrap}
+.tabs button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;
+             padding:7px 16px;border-radius:999px;cursor:pointer}
+.tabs button.on{background:var(--amber);color:#231803;font-weight:600}
+
+.box{border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:18px}
+textarea,.in{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:4px;
+             color:var(--paper);padding:12px;font:inherit;font-size:14px}
+textarea{min-height:170px;resize:vertical;font-family:'Newsreader',Georgia,serif;font-size:16px;line-height:1.65}
+textarea:focus,.in:focus,select:focus{outline:2px solid var(--amber);outline-offset:1px}
+select{background:var(--ink);color:var(--paper);border:1px solid var(--line);border-radius:4px;
+       padding:8px;font:inherit;font-size:12px}
+
+.btn{border:1px solid var(--line);background:transparent;color:var(--paper);font:inherit;font-size:13px;
+     padding:10px 16px;border-radius:4px;cursor:pointer}
+.btn:hover:not(:disabled){border-color:var(--muted)}
+.btn:disabled{opacity:.4;cursor:default}
+.pri{background:var(--amber);border-color:var(--amber);color:#231803;font-weight:600}
+.bar{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.note{font-size:11px;color:var(--muted);line-height:1.7}
+.err{color:var(--red);font-size:12px;margin-top:10px;line-height:1.6}
+.ok{color:var(--green);font-size:12px;margin-top:10px}
+
+.list{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.item{border:1px solid var(--line);border-radius:5px;background:var(--panel);padding:12px 14px}
+.row{display:flex;gap:11px;align-items:flex-start;width:100%}
+.chk{margin-top:3px;accent-color:var(--amber);width:16px;height:16px;flex:none}
+.ctext{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px;line-height:1.5;word-break:break-word}
+.ctext em{font-style:normal;color:var(--amber)}
+.sub{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.5}
+.tag{font-size:10px;letter-spacing:.07em;border:1px solid var(--line);border-radius:3px;
+     padding:2px 7px;color:var(--muted);flex:none;white-space:nowrap}
+.tag.frame{color:var(--amber);border-color:var(--amberdim)}
+.tag.colloc{color:var(--green);border-color:#28513F}
+.mini{border:1px solid var(--line);background:transparent;color:var(--muted);font:inherit;
+      font-size:11px;padding:6px 10px;border-radius:3px;cursor:pointer;flex:none}
+.mini:hover:not(:disabled){color:var(--paper)}
+.mini:disabled{opacity:.4}
+.mini.x{color:var(--muted);padding:6px 9px}
+.mini.x:hover{color:var(--red);border-color:var(--red)}
+.edit{display:flex;flex-direction:column;gap:12px}
+.edit .in{font-size:13px}
+.edit .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px}
+.item.editing{border-color:var(--amber)}
+.ex{margin:11px 0 0;padding:11px 0 0;border-top:1px solid var(--line);list-style:none;
+    display:flex;flex-direction:column;gap:8px}
+.ex li{font-size:13px;line-height:1.5}
+.ex span{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+
+.stage{border:1px solid var(--line);border-radius:6px;background:var(--panel);
+       padding:30px 24px 22px;min-height:270px;display:flex;flex-direction:column;justify-content:center}
+.eye{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.eyec{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);line-height:1.5}
+.en{font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:clamp(23px,4.2vw,44px);
+    line-height:1.3;letter-spacing:-.01em;margin:0 0 15px}
+.ja{font-size:14px;color:var(--muted);line-height:1.7;margin:0}
+.breath{height:2px;background:var(--amberdim);border-radius:2px;margin-top:22px;overflow:hidden}
+.breath i{display:block;height:100%;background:var(--amber);width:100%;transform-origin:left;transform:scaleX(0)}
+@keyframes drain{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@media (prefers-reduced-motion:reduce){.breath i{animation:none!important;opacity:.4}}
+.count{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.set{display:grid;grid-template-columns:repeat(auto-fit,minmax(172px,1fr));gap:14px 20px;
+     margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.f{display:flex;flex-direction:column;gap:6px}
+.l{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);font:inherit;font-size:12px;
+            padding:9px 3px;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--amber);color:#231803;font-weight:600}
+
+.warn{border:1px solid var(--amberdim);background:#1D1608;border-radius:5px;padding:12px 14px;
+      font-size:12px;line-height:1.7;color:var(--amber);margin-bottom:16px}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+h2{font-size:13px;letter-spacing:.06em;color:var(--muted);font-weight:500;margin:0 0 12px}
+.hr{height:1px;background:var(--line);margin:22px 0}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <div class="brand">Chunk Miner — 英文からチャンクを採る</div>
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<div id="warn"></div>
+<div id="view"></div>
+
+<script>
+/* ================= 保存 ================= */
+const store = {
+  ok: true,
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ this.ok=false; return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ this.ok=false; return false; } }
+};
+(function(){ try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); }catch(e){ store.ok=false; } })();
+
+/* ================= 初期データ ================= */
+const SAMPLE = `We prepared emergency uncrossmatched type O blood in case transfusion was required. On initial assessment, there were no significant abnormalities in the airway, breathing, or circulation. There may have been some neurological impairment, but the patient's level of consciousness appeared to have improved considerably.
+
+The patient was received in the CT room, where we performed an ABCD assessment. The airway was patent, and the patient was able to speak. Breathing was unlabored. There were no significant external injuries, and the pupils were equal bilaterally with normal light reflexes.`;
+
+const SEED = [
+ {text:"We prepared [X] in case [Y] was required.",kind:"frame",ja:"〜が必要になる場合に備えて〜を準備した",examples:[
+   {en:"We prepared emergency uncrossmatched type O blood in case transfusion was required.",ja:"輸血が必要になる場合に備えて、緊急用のO型血を準備しました。"},
+   {en:"We prepared the difficult airway cart in case intubation was required.",ja:"挿管が必要になる場合に備えて、困難気道カートを準備しました。"},
+   {en:"We prepared a second large-bore line in case rapid infusion was required.",ja:"急速輸液が必要になる場合に備えて、太い静脈路をもう一本確保しました。"}]},
+ {text:"On initial assessment, [X].",kind:"frame",ja:"初期評価では〜であった",examples:[
+   {en:"On initial assessment, there were no significant abnormalities in the airway, breathing, or circulation.",ja:"初期評価では、気道・呼吸・循環に明らかな異常は認めませんでした。"},
+   {en:"On initial assessment, the patient was hypotensive and tachycardic.",ja:"初期評価では、低血圧と頻脈を認めました。"},
+   {en:"On initial assessment, the abdomen was soft and non-tender.",ja:"初期評価では、腹部は軟で圧痛はありませんでした。"}]},
+ {text:"There were no significant abnormalities in [X].",kind:"frame",ja:"〜に明らかな異常は認めなかった",examples:[
+   {en:"There were no significant abnormalities in the airway, breathing, or circulation.",ja:"気道・呼吸・循環に明らかな異常は認めませんでした。"},
+   {en:"There were no significant abnormalities in the initial laboratory studies.",ja:"初回の血液検査に明らかな異常は認めませんでした。"},
+   {en:"There were no significant abnormalities in the chest radiograph.",ja:"胸部単純写真に明らかな異常は認めませんでした。"}]},
+ {text:"There may have been [X], but [Y].",kind:"frame",ja:"〜があった可能性はあるが、〜",examples:[
+   {en:"There may have been some neurological impairment, but the level of consciousness improved considerably.",ja:"神経学的な障害があった可能性はありますが、意識レベルはかなり改善しました。"},
+   {en:"There may have been some ongoing bleeding, but the vital signs remained stable.",ja:"出血が続いていた可能性はありますが、バイタルは安定していました。"},
+   {en:"There may have been a delay in transfer, but the outcome was not affected.",ja:"搬送に遅れがあった可能性はありますが、転帰には影響しませんでした。"}]},
+ {text:"[X] appeared to have improved considerably.",kind:"frame",ja:"〜はかなり改善したように見えた",examples:[
+   {en:"The patient's level of consciousness appeared to have improved considerably.",ja:"患者の意識レベルはかなり改善したように見えました。"},
+   {en:"The respiratory status appeared to have improved considerably by the second day.",ja:"呼吸状態は2日目までにかなり改善したように見えました。"},
+   {en:"The perfusion appeared to have improved considerably after resuscitation.",ja:"蘇生後、灌流はかなり改善したように見えました。"}]},
+ {text:"The patient was received in [X], where we performed [Y].",kind:"frame",ja:"〜で患者を受け入れ、そこで〜を行った",examples:[
+   {en:"The patient was received in the CT room, where we performed an ABCD assessment.",ja:"CT室で患者を受け入れ、そこでABCD評価を行いました。"},
+   {en:"The patient was received in the resuscitation bay, where we performed a FAST exam.",ja:"初療室で患者を受け入れ、そこでFASTを行いました。"},
+   {en:"The patient was received in the hybrid suite, where we performed damage control surgery.",ja:"ハイブリッド手術室で患者を受け入れ、そこでダメージコントロール手術を行いました。"}]},
+ {text:"[X] was able to [V].",kind:"frame",ja:"〜は〜することができた",examples:[
+   {en:"The patient was able to speak.",ja:"患者は発語が可能でした。"},
+   {en:"The patient was able to follow simple commands.",ja:"患者は簡単な指示に従うことができました。"},
+   {en:"He was able to maintain his own airway.",ja:"自力で気道を保持することができました。"}]},
+ {text:"perform an ABCD assessment",kind:"colloc",ja:"ABCD評価を行う",examples:[
+   {en:"We performed an ABCD assessment on arrival.",ja:"到着時にABCD評価を行いました。"},
+   {en:"An ABCD assessment was performed before transfer to CT.",ja:"CT搬送前にABCD評価を行いました。"}]},
+ {text:"emergency uncrossmatched type O blood",kind:"colloc",ja:"緊急用のクロスマッチ未実施O型血",examples:[
+   {en:"Emergency uncrossmatched type O blood was transfused in the resuscitation bay.",ja:"初療室で緊急用のO型血を輸血しました。"},
+   {en:"Two units of emergency uncrossmatched type O blood were given before crossmatch became available.",ja:"クロスマッチが揃うまでに、緊急O型血を2単位投与しました。"}]},
+ {text:"the airway, breathing, or circulation",kind:"colloc",ja:"気道・呼吸・循環",examples:[
+   {en:"There was no compromise of the airway, breathing, or circulation.",ja:"気道・呼吸・循環の破綻はありませんでした。"},
+   {en:"We reassessed the airway, breathing, and circulation after the intervention.",ja:"処置後に気道・呼吸・循環を再評価しました。"}]},
+ {text:"The airway was patent.",kind:"fixed",ja:"気道は開通していた",examples:[{en:"The airway was patent.",ja:"気道は開通していました。"}]},
+ {text:"Breathing was unlabored.",kind:"fixed",ja:"呼吸は努力様ではなかった",examples:[{en:"Breathing was unlabored.",ja:"呼吸は努力様ではありませんでした。"}]},
+ {text:"The pupils were equal bilaterally with normal light reflexes.",kind:"fixed",ja:"瞳孔は両側同大、対光反射は正常",examples:[{en:"The pupils were equal bilaterally with normal light reflexes.",ja:"瞳孔は両側同大で、対光反射は正常でした。"}]},
+ {text:"There were no significant external injuries.",kind:"fixed",ja:"明らかな外表所見は認めなかった",examples:[{en:"There were no significant external injuries.",ja:"明らかな外表所見は認めませんでした。"}]}
+].map((c,i)=>({...c,id:'s'+i,on:true,seen:1,added:Date.now()+i}));
+
+const KIND={frame:'型',colloc:'語結合',fixed:'定型文'};
+const norm = s => s.toLowerCase().replace(/\[[^\]]*\]/g,'~').replace(/[^a-z~ ]/g,'').replace(/\s+/g,' ').trim();
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const slot = s => esc(s).replace(/\[([^\]]*)\]/g,'<em>[$1]</em>');
+
+/* ================= 状態 ================= */
+let chunks   = store.get('cm.chunks', SEED);
+let settings = Object.assign({rate:1,repeat:2,gap:1.2,jaMode:'show',shuffle:false,loop:true,enV:'',jaV:'',
+                              topN:0,maxCand:5}, store.get('cm.set',{}));
+let apiKey   = store.get('cm.key','');
+let model    = store.get('cm.model','claude-sonnet-5');
+let tab      = 'in';
+let raw      = store.get('cm.raw', SAMPLE);
+let cands    = [];
+let busy     = '';
+let msg      = null;
+let sortBy   = 'added';
+let editing  = null;   // 編集中のチャンク id
+
+const save = () => { store.set('cm.chunks',chunks); store.set('cm.set',settings); };
+
+/* ================= 音声 ================= */
+let voices=[], queue=[], idx=0, playing=false, token=0;
+
+function loadVoices(){
+  if(!window.speechSynthesis) return;
+  const v = speechSynthesis.getVoices();
+  if(!v.length) return;
+  voices = v;
+  if(!settings.enV){
+    const en = v.filter(x=>x.lang.toLowerCase().startsWith('en'));
+    settings.enV = (en.find(x=>/samantha|ava|serena|daniel/i.test(x.name)) || en[0] || {}).voiceURI || '';
+  }
+  if(!settings.jaV){
+    const ja = v.filter(x=>x.lang.toLowerCase().startsWith('ja'));
+    settings.jaV = (ja.find(x=>/kyoko|o-ren/i.test(x.name)) || ja[0] || {}).voiceURI || '';
+  }
+  if(tab==='play') render();
+}
+if(window.speechSynthesis){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+
+function speak(text, lang, rate, voice){
+  return new Promise(res=>{
+    if(!text || !window.speechSynthesis) return res();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang; u.rate = rate; if(voice) u.voice = voice;
+    let done=false; const fin=()=>{ if(done)return; done=true; clearTimeout(t); res(); };
+    u.onend=fin; u.onerror=fin;
+    const t = setTimeout(fin, Math.max(2500, text.length*95/rate + 2000));
+    speechSynthesis.speak(u);
+  });
+}
+const estMs = (t,r)=>Math.max(900, t.length*62/r);
+const wait = (ms,tk)=>new Promise(res=>{
+  const iv=setInterval(()=>{ if(tk!==token){clearInterval(iv);res();} },80);
+  setTimeout(()=>{clearInterval(iv);res();},ms);
+});
+
+/* 練習キューに入るチャンク。オンのものを、遭遇回数の上位N件に絞る（topN=0 は絞らない） */
+function activeChunks(){
+  const on = chunks.filter(c=>c.on);
+  if(!settings.topN) return on;
+  return on.slice().sort((a,b)=>b.seen-a.seen || b.added-a.added).slice(0, settings.topN);
+}
+function build(){
+  const out=[];
+  activeChunks().forEach(c=>{
+    c.examples.forEach((e,j)=>out.push({en:e.en,ja:e.ja,chunk:c.text,kind:c.kind,key:c.id+'-'+j})); });
+  if(settings.shuffle) for(let i=out.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [out[i],out[j]]=[out[j],out[i]]; }
+  return out;
+}
+function stop(){ token++; if(window.speechSynthesis) speechSynthesis.cancel(); playing=false; render(); }
+
+async function run(start, list){
+  const tk = ++token; playing=true;
+  let items=list, i=start;
+  while(true){
+    if(tk!==token) return;
+    if(i>=items.length){ if(!settings.loop) break; items=build(); queue=items; i=0; if(!items.length) break; }
+    idx=i; render();
+    const it=items[i];
+    const ev=voices.find(v=>v.voiceURI===settings.enV), jv=voices.find(v=>v.voiceURI===settings.jaV);
+    if(settings.jaMode==='speak' && it.ja){ await speak(it.ja,'ja-JP',1,jv); if(tk!==token) return; await wait(250,tk); }
+    for(let k=0;k<settings.repeat;k++){
+      if(tk!==token) return;
+      await speak(it.en,'en-US',settings.rate,ev);
+      if(tk!==token) return;
+      if(settings.gap>0){ const g=estMs(it.en,settings.rate)*settings.gap; drain(g); await wait(g,tk); }
+      else await wait(300,tk);
+    }
+    i++;
+  }
+  playing=false; render();
+}
+function drain(ms){
+  const el=document.getElementById('drain'); if(!el) return;
+  el.style.animation='none'; void el.offsetWidth;
+  el.style.animation='drain '+ms+'ms linear forwards';
+}
+/* iOS は最初の発話がユーザー操作の中で始まらないと以降すべて無音になる。
+   クリックハンドラの同期実行中に無音の発話を1回流して解禁する。 */
+let primed = false;
+function prime(){
+  if(primed || !window.speechSynthesis) return;
+  primed = true;
+  try{ const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); }catch(e){}
+}
+
+function toggle(){
+  prime();
+  if(playing) return stop();
+  const list = queue.length ? queue : build();
+  if(!list.length) return;
+  queue=list; run(Math.min(idx,list.length-1), list);
+}
+function jump(d){
+  prime();
+  const list = queue.length ? queue : build();
+  if(!list.length) return;
+  const n=(idx+d+list.length)%list.length;
+  if(playing){ token++; if(window.speechSynthesis) speechSynthesis.cancel(); setTimeout(()=>run(n,list),60); }
+  else { idx=n; render(); }
+}
+
+/* ================= API ================= */
+async function callAPI(prompt, maxTokens){
+  if(!apiKey) throw new Error('NOKEY');
+  const res = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'content-type':'application/json',
+      'x-api-key':apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body: JSON.stringify({model, max_tokens:maxTokens, messages:[{role:'user',content:prompt}]})
+  });
+  if(!res.ok){
+    const t = await res.text();
+    throw new Error('HTTP '+res.status+' '+t.slice(0,200));
+  }
+  const data = await res.json();
+  const txt = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+  return JSON.parse(txt.replace(/```json|```/g,'').trim());
+}
+
+async function analyze(){
+  if(!raw.trim()) return;
+  busy='analyze'; msg=null; cands=[]; render();
+  const lim = settings.maxCand || 5;
+  try{
+    const arr = await callAPI(`日本人の救急・集中治療医が、国際学会やカンファレンスの質疑応答で自分の口から出せるようにするための「チャンク」を、以下の英文から抽出してください。
+
+英文:
+"""
+${raw}
+"""
+
+抽出のルール:
+1. 3種類に分類する
+   - frame: スロットを持つ再利用可能な型。差し替え部分を [X] [Y] [V] のように明示する。例: "There were no significant abnormalities in [X]."
+   - colloc: 語のまとまり（動詞+名詞、専門的な名詞句）。スロットは付けない。例: "perform an ABCD assessment"
+   - fixed: 文ごと覚える定型文。変形の余地が小さいもの。例: "The airway was patent."
+2. frame を最優先する。再利用性が高いものほど価値がある。
+3. 冠詞や前置詞まで含めて、そのまま口に出せる形で切る。
+4. 次の3点をすべて満たすものだけを残す。ひとつでも欠けるなら捨てる。
+   - 別の症例・別の場面でも、中身を差し替えればそのまま使い回せる
+   - 発表や質疑応答の場で、実際に声に出して言う形になっている
+   - 日本人医師が自力では組み立てにくい構造を含む（語を並べれば作れるものは不要）
+5. 抽出しないもの: 一般語（"the patient", "we performed"）、この症例にしか出てこない内容語だけのもの、
+   構造的な価値のない単なる名詞。
+6. 最大 ${lim} 個。上限であって目標ではない。
+   基準を満たすものが2個しかなければ2個だけ返す。数を埋めるために基準を下げないこと。
+7. 患者個人情報は含めない。
+
+各項目に日本語の意味を付ける。JSONのみを出力。前置きもコードフェンスも不要。
+形式: [{"text":"チャンク","kind":"frame|colloc|fixed","ja":"日本語の意味"}]`, 2000);
+    const have = new Set(chunks.map(c=>norm(c.text)));
+    cands = arr.filter(a=>a&&a.text).slice(0,lim)   // モデルが上限を超えても切り詰める
+              .map((a,i)=>({...a,cid:i,on:true,dup:have.has(norm(a.text))}));
+  }catch(e){ msg = errMsg(e); }
+  busy=''; render();
+}
+
+async function gen(c, n){
+  busy=c.id; msg=null; render();
+  try{
+    const had = c.examples.map(e=>e.en).join(' / ');
+    const arr = await callAPI(`救急・集中治療の日本人医師が、口頭練習に使う英語例文を作ります。
+
+チャンク: ${c.text}
+種類: ${KIND[c.kind]||c.kind}
+意味: ${c.ja}
+
+このチャンクを必ず含む自然な英文を${n||4}個作ってください。
+- 急性期医療の場面（初療、ICU回診、症例カンファ、学会発表の質疑）で実際に口に出す文
+- 10〜20語程度。話し言葉として自然に
+- ${c.kind==='frame' ? 'スロットの中身を毎回変え、時制・極性・条件節も振って幅を出す' : '文脈を変えて、いろいろな文の中で使う'}
+- 患者個人情報は入れない
+- 既出と重複させない: ${had||'なし'}
+
+JSONのみ出力。コードフェンス不要。
+形式: [{"en":"英文","ja":"日本語訳"}]`, 1200);
+    c.examples = c.examples.concat(arr.filter(a=>a&&a.en));
+    save();
+  }catch(e){ msg = errMsg(e); }
+  busy=''; render();
+}
+
+function errMsg(e){
+  const m = String(e.message||e);
+  if(m==='NOKEY') return {t:'err', s:'APIキーが設定されていません。「設定」タブで入力してください。'};
+  if(m.includes('401')) return {t:'err', s:'APIキーが無効です。設定タブで確認してください。'};
+  if(m.includes('404')) return {t:'err', s:'モデル名が見つかりません。設定タブで別のモデルを選んでください。'};
+  if(m.includes('429')) return {t:'err', s:'レート上限に達しました。少し待って再試行してください。'};
+  if(m.includes('Failed to fetch')||m.includes('NetworkError'))
+    return {t:'err', s:'通信に失敗しました。file:// で開いている場合、ブラウザがブロックしている可能性があります。ローカルサーバ経由で開くと解決します（設定タブ末尾を参照）。'};
+  return {t:'err', s:'エラー: '+m};
+}
+
+/* ================= 保存/読込 ================= */
+function exportJSON(){
+  const blob = new Blob([JSON.stringify({v:1, chunks}, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'chunks-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click(); URL.revokeObjectURL(a.href);
+}
+function importJSON(file){
+  const fr = new FileReader();
+  fr.onload = () => {
+    try{
+      const d = JSON.parse(fr.result);
+      const arr = Array.isArray(d) ? d : d.chunks;
+      if(!Array.isArray(arr)) throw new Error('形式が違います');
+      let add=0, merged=0;
+      arr.forEach(p=>{
+        if(!p || !p.text) return;
+        const k = norm(p.text);
+        const hit = chunks.find(c=>norm(c.text)===k);
+        if(hit){ hit.seen += (p.seen||1); merged++;
+          (p.examples||[]).forEach(e=>{ if(e&&e.en&&!hit.examples.some(x=>x.en===e.en)) hit.examples.push(e); });
+        } else {
+          chunks.unshift({id:'i'+Date.now()+'-'+add, text:p.text, kind:p.kind||'frame', ja:p.ja||'',
+                          examples:p.examples||[], on:p.on!==false, seen:p.seen||1, added:Date.now()+add});
+          add++;
+        }
+      });
+      save(); queue=[]; idx=0;
+      msg={t:'ok', s:`読み込みました。新規 ${add} 件、統合 ${merged} 件。`}; render();
+    }catch(e){ msg={t:'err', s:'読み込めませんでした: '+e.message}; render(); }
+  };
+  fr.readAsText(file);
+}
+
+/* ================= 描画 ================= */
+const TABS = [['in','取り込み'],['lib','チャンク'],['play','練習'],['set','設定']];
+
+function render(){
+  document.getElementById('tabs').innerHTML = TABS.map(([v,l])=>
+    `<button class="${tab===v?'on':''}" data-tab="${v}">${l}${v==='lib'?' '+chunks.length:''}</button>`).join('');
+
+  document.getElementById('warn').innerHTML =
+    (!store.ok ? `<div class="warn">このブラウザでは保存領域が使えないため、閉じると内容が消えます。ファイルをダウンロードして直接開くと保存されます。</div>` : '') +
+    (!apiKey ? `<div class="warn">APIキーが未設定です。抽出と例文生成には「設定」タブでキーを入れてください。再生だけなら設定なしで動きます。</div>` : '');
+
+  const v = document.getElementById('view');
+  if(tab==='in')   v.innerHTML = viewIn();
+  if(tab==='lib')  v.innerHTML = viewLib();
+  if(tab==='play') v.innerHTML = viewPlay();
+  if(tab==='set')  v.innerHTML = viewSet();
+  bind();
+}
+
+function msgHTML(){ return msg ? `<p class="${msg.t}">${esc(msg.s)}</p>` : ''; }
+
+function viewIn(){
+  return `<div class="box">
+    <textarea id="raw" placeholder="英文を貼り付けます。自分が書いた発表原稿、論文の一節、会議で聞いた表現など。">${esc(raw)}</textarea>
+    <div class="bar">
+      <button class="btn pri" id="doAnalyze" ${busy==='analyze'?'disabled':''}>${busy==='analyze'?'解析中…':'チャンクを抽出'}</button>
+      <select id="maxCand" title="1回の抽出で出す上限">
+        ${[3,5,8,12].map(n=>`<option value="${n}" ${settings.maxCand===n?'selected':''}>最大 ${n} 個</option>`).join('')}
+      </select>
+      <button class="btn" id="clearRaw">消す</button>
+      <span class="note" style="margin-left:auto">個人情報を含まない英文だけを入れてください</span>
+    </div>${msgHTML()}
+  </div>
+  ${cands.length ? `<div class="list">${cands.map(c=>`
+    <div class="item"><div class="row">
+      <input type="checkbox" class="chk" data-cand="${c.cid}" ${c.on?'checked':''}>
+      <div style="flex:1;min-width:0">
+        <div class="ctext">${slot(c.text)}</div>
+        <div class="sub">${esc(c.ja||'')}${c.dup?' <span style="color:var(--green)">・既存の型（保存すると遭遇回数+1）</span>':''}</div>
+      </div>
+      <span class="tag ${c.kind}">${KIND[c.kind]||c.kind}</span>
+    </div></div>`).join('')}</div>
+    <div class="bar">
+      <button class="btn pri" id="doSave">選んだ ${cands.filter(c=>c.on).length} 件を保存</button>
+      <button class="btn" id="doDiscard">破棄</button>
+    </div>`
+  : `<p class="note" style="margin-top:16px">型（スロットあり）・語結合・定型文の3種類に分けて抽出します。展開が効くのは型と語結合で、定型文は文ごと覚える対象です。同じ型を再度取り込むと、新規追加ではなく遭遇回数が増えます。<br>
+      上限は少なめのほうがライブラリが長持ちします。1本の英文から本当に効くのは3〜5個です。上限に届かない件数が返ることもありますが、それは基準を満たすものがなかったということです。</p>`}`;
+}
+
+function sorted(){
+  const a = chunks.slice();
+  if(sortBy==='seen') a.sort((x,y)=>y.seen-x.seen || y.added-x.added);
+  else if(sortBy==='ex') a.sort((x,y)=>y.examples.length-x.examples.length);
+  else a.sort((x,y)=>y.added-x.added);
+  return a;
+}
+
+function viewLib(){
+  return `${msgHTML()}
+  <div class="bar" style="margin:0 0 14px">
+    <select id="sortBy">
+      <option value="added" ${sortBy==='added'?'selected':''}>追加順</option>
+      <option value="seen" ${sortBy==='seen'?'selected':''}>遭遇回数順</option>
+      <option value="ex" ${sortBy==='ex'?'selected':''}>例文数順</option>
+    </select>
+    <button class="btn" id="allOn">全部オン</button>
+    <button class="btn" id="allOff">全部オフ</button>
+    <span class="count">${chunks.filter(c=>c.on).length} / ${chunks.length} 使用中</span>
+  </div>
+  <div class="list" style="margin-top:0">${sorted().map(c=>
+    c.id===editing ? editForm(c) : `
+    <div class="item">
+      <div class="row">
+        <input type="checkbox" class="chk" data-on="${c.id}" ${c.on?'checked':''}>
+        <div style="flex:1;min-width:0">
+          <div class="ctext">${slot(c.text)}</div>
+          <div class="sub">${esc(c.ja||'')} ・ 例文 ${c.examples.length} ・ 遭遇 ${c.seen}回</div>
+        </div>
+        <span class="tag ${c.kind}">${KIND[c.kind]||c.kind}</span>
+        <button class="mini" data-edit="${c.id}">編集</button>
+        <button class="mini" data-gen="${c.id}" ${busy===c.id?'disabled':''}>${busy===c.id?'生成中…':'例文を増やす'}</button>
+        <button class="mini x" data-del="${c.id}" title="削除">×</button>
+      </div>
+      ${c.examples.length?`<ul class="ex">${c.examples.map(e=>
+        `<li>${esc(e.en)}${e.ja?`<span>${esc(e.ja)}</span>`:''}</li>`).join('')}</ul>`:''}
+    </div>`).join('')}</div>
+  <p class="note" style="margin-top:14px">チェックを外した型は練習キューから除かれます。遭遇回数が伸びた型ほど、実際の現場でよく使われている表現です。</p>`;
+}
+
+function editForm(c){
+  return `<div class="item editing">
+    <div class="edit">
+      <div class="f">
+        <span class="l">チャンク（差し替える部分は [X] [Y] [V]）</span>
+        <input class="in mono" id="edText" value="${esc(c.text)}">
+      </div>
+      <div class="f">
+        <span class="l">日本語の意味</span>
+        <input class="in" id="edJa" value="${esc(c.ja||'')}">
+      </div>
+      <div class="f">
+        <span class="l">種類</span>
+        <select id="edKind">${Object.entries(KIND).map(([k,l])=>
+          `<option value="${k}" ${c.kind===k?'selected':''}>${l}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="bar">
+      <button class="btn pri" id="edSave">保存</button>
+      <button class="btn" id="edCancel">やめる</button>
+      <span class="note" style="margin-left:auto">遭遇回数 ${c.seen} と例文 ${c.examples.length} 件はそのまま残ります</span>
+    </div>
+  </div>`;
+}
+
+function seg(name, opts, cur){
+  return `<div class="seg">${opts.map(([v,l])=>
+    `<button data-set="${name}" data-val="${v}" class="${String(cur)===String(v)?'on':''}">${l}</button>`).join('')}</div>`;
+}
+
+function viewPlay(){
+  if(!queue.length) queue = build();
+  const cur = queue[idx];
+  const enOpts = voices.filter(v=>v.lang.toLowerCase().startsWith('en'));
+  const jaOpts = voices.filter(v=>v.lang.toLowerCase().startsWith('ja'));
+  return `<div class="stage">${ cur ? `
+      <div class="eye"><span class="eyec">${slot(cur.chunk)}</span><span class="tag ${cur.kind}">${KIND[cur.kind]}</span></div>
+      <p class="en">${esc(cur.en)}</p>
+      ${settings.jaMode!=='off'&&cur.ja?`<p class="ja">${esc(cur.ja)}</p>`:''}
+      <div class="breath"><i id="drain"></i></div>`
+    : `<p class="note" style="text-align:center">例文がありません。「チャンク」タブで型を選ぶか、例文を増やしてください。</p>`}</div>
+  <div class="bar">
+    <button class="btn pri" id="doPlay" style="min-width:104px" ${!queue.length?'disabled':''}>${playing?'停止':'再生'}</button>
+    <button class="btn" id="doPrev" ${!queue.length?'disabled':''}>前へ</button>
+    <button class="btn" id="doNext" ${!queue.length?'disabled':''}>次へ</button>
+    <span class="count">${queue.length?(idx+1)+' / '+queue.length:'0 / 0'} ・ ${activeChunks().length}チャンク</span>
+  </div>
+  <div class="set">
+    <div class="f"><span class="l">練習範囲</span>${seg('topN',[[0,'全部'],[10,'上位10'],[20,'上位20'],[30,'上位30']],settings.topN)}</div>
+    <div class="f"><span class="l">速度</span>${seg('rate',[[1,'標準'],[1.5,'1.5倍']],settings.rate)}</div>
+    <div class="f"><span class="l">繰り返し</span>${seg('repeat',[[1,'1回'],[2,'2回'],[3,'3回']],settings.repeat)}</div>
+    <div class="f"><span class="l">復唱の間</span>${seg('gap',[[0,'なし'],[0.8,'短め'],[1.2,'標準'],[1.8,'長め']],settings.gap)}</div>
+    <div class="f"><span class="l">日本語</span>${seg('jaMode',[['show','表示'],['speak','読み上げ'],['off','なし']],settings.jaMode)}</div>
+    <div class="f"><span class="l">順序</span>${seg('shuffle',[[false,'順番'],[true,'シャッフル']],settings.shuffle)}</div>
+    <div class="f"><span class="l">ループ</span>${seg('loop',[[true,'する'],[false,'しない']],settings.loop)}</div>
+    <div class="f"><span class="l">英語の声</span><select id="enV">${enOpts.map(v=>
+      `<option value="${esc(v.voiceURI)}" ${v.voiceURI===settings.enV?'selected':''}>${esc(v.name)}</option>`).join('')}</select></div>
+    <div class="f"><span class="l">日本語の声</span><select id="jaV">${jaOpts.map(v=>
+      `<option value="${esc(v.voiceURI)}" ${v.voiceURI===settings.jaV?'selected':''}>${esc(v.name)}</option>`).join('')}</select></div>
+  </div>
+  <p class="note" style="margin-top:14px">設定は次の例文から反映されます。琥珀色の線が消えるまでが復唱の間です。画面を消すと再生も止まります。<br>
+    「練習範囲」は遭遇回数の多い順に絞り込みます。上位30に絞ると、実際の現場で繰り返し出てきた型だけが回ります。${
+      settings.topN ? `いまは ${chunks.filter(c=>c.on).length} 件のうち上位 ${activeChunks().length} 件です。` : ''}</p>`;
+}
+
+function viewSet(){
+  return `${msgHTML()}
+  <div class="box">
+    <h2>APIキー</h2>
+    <input class="in" id="key" type="password" placeholder="sk-ant-..." value="${esc(apiKey)}">
+    <div class="bar">
+      <select id="model">
+        ${[['claude-sonnet-5','Sonnet 5（標準）'],['claude-haiku-4-5-20251001','Haiku 4.5（速い・安い）'],['claude-opus-5','Opus 5（高精度）']]
+          .map(([v,l])=>`<option value="${v}" ${model===v?'selected':''}>${l}</option>`).join('')}
+      </select>
+      <button class="btn pri" id="saveKey">保存</button>
+      <button class="btn" id="clearKey">キーを消す</button>
+    </div>
+    <p class="note" style="margin-top:12px">キーはこの端末のブラウザ内にのみ保存され、Anthropic 以外には送られません。console.anthropic.com で発行できます。共有端末では使わないでください。</p>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="box">
+    <h2>チャンクの書き出し・読み込み</h2>
+    <div class="bar" style="margin-top:0">
+      <button class="btn" id="doExport">JSONで書き出す</button>
+      <button class="btn" id="doImport">JSONを読み込む</button>
+      <input type="file" id="file" accept="application/json" style="display:none">
+      <span class="count">${chunks.length} チャンク / 例文 ${chunks.reduce((a,c)=>a+c.examples.length,0)}</span>
+    </div>
+    <p class="note" style="margin-top:12px">読み込みは統合方式です。同じ型があれば遭遇回数と例文が足され、重複しません。定期的に書き出してバックアップしてください。</p>
+    <div class="bar">
+      <button class="btn" id="doReset" style="border-color:var(--red);color:var(--red)">すべて消して初期状態に戻す</button>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="box">
+    <h2>使い方のメモ</h2>
+    <p class="note">
+      <b>iPhone</b>：Safari で開き、共有ボタンから「ホーム画面に追加」。アドレスバーのないアプリとして起動します。
+      一度開けばオフラインでも練習タブは動きます（抽出と例文生成は通信が要ります）。
+      再生は必ず「再生」ボタンから始めてください。iOS は画面を操作せずに音を出せません。
+      画面がロックされると読み上げは止まります。<br><br>
+      <b>Mac</b>：ブラウザで同じ URL を開くだけです。ローカルのファイルを直接開く場合、通信がブロックされることがあります。
+      その場合はファイルのあるフォルダで <code style="color:var(--amber)">python3 -m http.server 8000</code> を実行し、
+      <code style="color:var(--amber)">http://localhost:8000/</code> を開いてください。<br><br>
+      <b>保存</b>：チャンク・設定・APIキーはその端末のブラウザにだけ保存されます。Mac と iPhone の間では共有されないので、
+      JSON の書き出し／読み込みで移してください。読み込みは統合方式なので、両方で使っても重複しません。
+    </p>
+  </div>`;
+}
+
+/* ================= イベント ================= */
+function bind(){
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{
+    if(b.dataset.tab!=='play' && playing) stop();
+    tab=b.dataset.tab; msg=null; editing=null; render();
+  });
+
+  const $ = id => document.getElementById(id);
+
+  if(tab==='in'){
+    const ta=$('raw'); if(ta) ta.oninput=e=>{ raw=e.target.value; store.set('cm.raw',raw); };
+    if($('maxCand')) $('maxCand').onchange=e=>{ settings.maxCand=parseInt(e.target.value,10); save(); };
+    if($('doAnalyze')) $('doAnalyze').onclick=analyze;
+    if($('clearRaw')) $('clearRaw').onclick=()=>{ raw=''; store.set('cm.raw',''); render(); };
+    document.querySelectorAll('[data-cand]').forEach(el=>el.onchange=()=>{
+      const c=cands.find(x=>x.cid==el.dataset.cand); c.on=el.checked; render();
+    });
+    if($('doDiscard')) $('doDiscard').onclick=()=>{ cands=[]; render(); };
+    if($('doSave')) $('doSave').onclick=()=>{
+      let add=0, up=0;
+      cands.filter(c=>c.on).forEach((p,i)=>{
+        const k=norm(p.text), hit=chunks.find(c=>norm(c.text)===k);
+        if(hit){ hit.seen++; up++; }
+        else { chunks.unshift({id:'u'+Date.now()+'-'+i,text:p.text,kind:p.kind||'frame',ja:p.ja||'',
+                               examples:[],on:true,seen:1,added:Date.now()+i}); add++; }
+      });
+      cands=[]; save(); queue=[]; idx=0;
+      msg={t:'ok',s:`保存しました。新規 ${add} 件、遭遇回数+1 が ${up} 件。`};
+      tab='lib'; render();
+    };
+  }
+
+  if(tab==='lib'){
+    if($('sortBy')) $('sortBy').onchange=e=>{ sortBy=e.target.value; render(); };
+    if($('allOn')) $('allOn').onclick=()=>{ chunks.forEach(c=>c.on=true); save(); queue=[]; render(); };
+    if($('allOff')) $('allOff').onclick=()=>{ chunks.forEach(c=>c.on=false); save(); queue=[]; render(); };
+    document.querySelectorAll('[data-on]').forEach(el=>el.onchange=()=>{
+      const c=chunks.find(x=>x.id===el.dataset.on); c.on=el.checked; save(); queue=[]; idx=0; render();
+    });
+    document.querySelectorAll('[data-gen]').forEach(el=>el.onclick=()=>{
+      gen(chunks.find(x=>x.id===el.dataset.gen), 4);
+    });
+    document.querySelectorAll('[data-del]').forEach(el=>el.onclick=()=>{
+      const c=chunks.find(x=>x.id===el.dataset.del);
+      if(!confirm('削除しますか？\n\n'+c.text)) return;
+      if(editing===c.id) editing=null;
+      chunks=chunks.filter(x=>x.id!==c.id); save(); queue=[]; idx=0; render();
+    });
+    document.querySelectorAll('[data-edit]').forEach(el=>el.onclick=()=>{
+      editing=el.dataset.edit; msg=null; render();
+      const f=$('edText'); if(f){ f.focus(); f.setSelectionRange(f.value.length,f.value.length); }
+    });
+    if($('edCancel')) $('edCancel').onclick=()=>{ editing=null; msg=null; render(); };
+    if($('edSave')) $('edSave').onclick=()=>{
+      const c=chunks.find(x=>x.id===editing); if(!c) return;
+      const text=$('edText').value.trim(), ja=$('edJa').value.trim(), kind=$('edKind').value;
+      if(!text){ msg={t:'err',s:'チャンクが空です。'}; render(); return; }
+      const clash=chunks.find(x=>x.id!==c.id && norm(x.text)===norm(text));
+      if(clash){ msg={t:'err',s:'同じ型がすでにあります: '+clash.text}; render(); return; }
+      c.text=text; c.ja=ja; c.kind=kind;
+      editing=null; save(); queue=[]; idx=0;
+      msg={t:'ok',s:'更新しました。'}; render();
+    };
+  }
+
+  if(tab==='play'){
+    if($('doPlay')) $('doPlay').onclick=toggle;
+    if($('doPrev')) $('doPrev').onclick=()=>jump(-1);
+    if($('doNext')) $('doNext').onclick=()=>jump(1);
+    document.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>{
+      const n=b.dataset.set; let v=b.dataset.val;
+      if(v==='true') v=true; else if(v==='false') v=false; else if(!isNaN(parseFloat(v))) v=parseFloat(v);
+      settings[n]=v; save();
+      if(n==='shuffle'||n==='topN'){ queue=[]; idx=0; }
+      render();
+    });
+    if($('enV')) $('enV').onchange=e=>{ settings.enV=e.target.value; save(); };
+    if($('jaV')) $('jaV').onchange=e=>{ settings.jaV=e.target.value; save(); };
+  }
+
+  if(tab==='set'){
+    if($('saveKey')) $('saveKey').onclick=()=>{
+      apiKey=$('key').value.trim(); model=$('model').value;
+      store.set('cm.key',apiKey); store.set('cm.model',model);
+      msg={t:'ok',s:'保存しました。'}; render();
+    };
+    if($('clearKey')) $('clearKey').onclick=()=>{
+      apiKey=''; store.set('cm.key',''); msg={t:'ok',s:'キーを削除しました。'}; render();
+    };
+    if($('doExport')) $('doExport').onclick=exportJSON;
+    if($('doImport')) $('doImport').onclick=()=>$('file').click();
+    if($('file')) $('file').onchange=e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); };
+    if($('doReset')) $('doReset').onclick=()=>{
+      if(!confirm('保存したチャンクをすべて消して初期状態に戻します。よろしいですか？')) return;
+      chunks=JSON.parse(JSON.stringify(SEED)); save(); queue=[]; idx=0;
+      msg={t:'ok',s:'初期状態に戻しました。'}; render();
+    };
+  }
+}
+
+window.addEventListener('beforeunload',()=>{ if(window.speechSynthesis) speechSynthesis.cancel(); });
+
+/* オフラインでも練習できるように。file:// では登録できないので黙って諦める */
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+
+render();
+</script>
+</body>
+</html>
