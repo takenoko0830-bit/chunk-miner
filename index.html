@@ -178,13 +178,6 @@ const norm = s => s.toLowerCase().replace(/\[[^\]]*\]/g,'~').replace(/[^a-z~ ]/g
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const slot = s => esc(s).replace(/\[([^\]]*)\]/g,'<em>[$1]</em>');
 
-/* ホーム画面に追加したアプリとして起動したか。
-   iOS Safari は navigator.standalone、その他は display-mode で判定する。
-   ホーム画面から開くのは練習が目的なので、その場合だけ練習タブで始める。
-   ブラウザで開いたときは取り込みのまま（Mac でチャンクを足す作業のため）。 */
-const standalone = navigator.standalone === true ||
-  (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
-
 /* ================= 状態 ================= */
 /* SEED をそのまま渡すと参照が共有され、unshift や編集が定数 SEED を書き換えてしまう。
    そうなると「初期状態に戻す」が汚染された SEED を復元することになる。必ず複製を渡すこと。 */
@@ -193,7 +186,8 @@ let settings = Object.assign({rate:1,repeat:2,gap:1.2,jaMode:'show',shuffle:fals
                               topN:0,maxCand:5}, store.get('cm.set',{}));
 let apiKey   = store.get('cm.key','');
 let model    = store.get('cm.model','claude-sonnet-5');
-let tab      = standalone ? 'play' : 'in';
+/* 起動は常に練習タブ。standalone 判定に頼ると効かない環境があったため、条件を外した */
+let tab      = 'play';
 let raw      = store.get('cm.raw', SAMPLE);
 let cands    = [];
 let busy     = '';
