@@ -1,0 +1,105 @@
+{
+  "v": 1,
+  "chunks": [
+    {
+      "text": "Regarding [X], [Y].",
+      "kind": "frame",
+      "ja": "〜については、〜",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Regarding the respiratory status, we were able to wean him off the ventilator this morning.",
+          "ja": "呼吸状態については、今朝人工呼吸器から離脱できました。"
+        },
+        {
+          "en": "Regarding the antibiotics, we narrowed the coverage once the cultures came back.",
+          "ja": "抗菌薬については、培養結果が出た時点でスペクトラムを狭めました。"
+        },
+        {
+          "en": "Regarding the renal function, the creatinine has been trending down since we stopped the contrast.",
+          "ja": "腎機能については、造影剤を中止して以降クレアチニンは低下傾向です。"
+        }
+      ]
+    },
+    {
+      "text": "We are currently managing [X] with [Y].",
+      "kind": "frame",
+      "ja": "現在〜を〜で管理している",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We are currently managing fluid removal with furosemide.",
+          "ja": "現在、除水はフロセミドで管理しています。"
+        },
+        {
+          "en": "We are currently managing his agitation with dexmedetomidine rather than propofol.",
+          "ja": "現在、不穏はプロポフォールではなくデクスメデトミジンで管理しています。"
+        },
+        {
+          "en": "We are currently managing the hypotension with noradrenaline alone.",
+          "ja": "現在、低血圧はノルアドレナリン単剤で管理しています。"
+        }
+      ]
+    },
+    {
+      "text": "[X] is being administered at [Y] for [Z].",
+      "kind": "frame",
+      "ja": "〜を〜の量で、〜の目的で投与している",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Dobutamine is being administered at 2.4 micrograms per kilogram per minute for inotropic support.",
+          "ja": "強心目的で、ドブタミンを2.4γで投与しています。"
+        },
+        {
+          "en": "Noradrenaline is being administered at 0.08 micrograms per kilogram per minute for blood pressure support.",
+          "ja": "昇圧目的で、ノルアドレナリンを0.08γで投与しています。"
+        },
+        {
+          "en": "Insulin is being administered at two units per hour for glycemic control.",
+          "ja": "血糖管理の目的で、インスリンを毎時2単位で投与しています。"
+        }
+      ]
+    },
+    {
+      "text": "with [X] now down to [Y]",
+      "kind": "frame",
+      "ja": "〜が〜まで下がった状態で（付帯状況のwith）",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "His condition has stabilized, with the CRP now down to around 100.",
+          "ja": "CRPが100前後まで下がり、状態は安定しています。"
+        },
+        {
+          "en": "The septic picture is improving, with the lactate now down to 1.8.",
+          "ja": "乳酸が1.8まで下がり、敗血症の病像は改善しています。"
+        },
+        {
+          "en": "We are weaning the support, with the noradrenaline now down to 0.03 micrograms per kilogram per minute.",
+          "ja": "ノルアドレナリンが0.03γまで下がり、サポートを漸減しています。"
+        }
+      ]
+    },
+    {
+      "text": "A follow-up [X] is scheduled for [Y].",
+      "kind": "frame",
+      "ja": "フォローの〜を〜に予定している",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "As for the cerebral infarction, a follow-up CT scan is scheduled for today.",
+          "ja": "脳梗塞については、本日フォローのCTを予定しています。"
+        },
+        {
+          "en": "A follow-up echocardiogram is scheduled for tomorrow morning.",
+          "ja": "明日の朝、フォローの心エコーを予定しています。"
+        },
+        {
+          "en": "A follow-up chest radiograph is scheduled for after the drain is removed.",
+          "ja": "ドレーン抜去後に、フォローの胸部単純写真を予定しています。"
+        }
+      ]
+    }
+  ]
+}
