@@ -1,0 +1,341 @@
+{
+  "v": 1,
+  "chunks": [
+    {
+      "text": "We prepared [X] in case [Y] was required.",
+      "kind": "frame",
+      "ja": "〜が必要になる場合に備えて〜を準備した",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We prepared emergency uncrossmatched type O blood in case transfusion was required.",
+          "ja": "輸血が必要になる場合に備えて、緊急用のO型血を準備しました。"
+        },
+        {
+          "en": "We prepared the difficult airway cart in case intubation was required.",
+          "ja": "挿管が必要になる場合に備えて、困難気道カートを準備しました。"
+        },
+        {
+          "en": "We prepared a second large-bore line in case rapid infusion was required.",
+          "ja": "急速輸液が必要になる場合に備えて、太い静脈路をもう一本確保しました。"
+        }
+      ]
+    },
+    {
+      "text": "On initial assessment, [X].",
+      "kind": "frame",
+      "ja": "初期評価では〜であった",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "On initial assessment, there were no significant abnormalities in the airway, breathing, or circulation.",
+          "ja": "初期評価では、気道・呼吸・循環に明らかな異常は認めませんでした。"
+        },
+        {
+          "en": "On initial assessment, the patient was hypotensive and tachycardic.",
+          "ja": "初期評価では、低血圧と頻脈を認めました。"
+        },
+        {
+          "en": "On initial assessment, the abdomen was soft and non-tender.",
+          "ja": "初期評価では、腹部は軟で圧痛はありませんでした。"
+        }
+      ]
+    },
+    {
+      "text": "There were no significant abnormalities in [X].",
+      "kind": "frame",
+      "ja": "〜に明らかな異常は認めなかった",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "There were no significant abnormalities in the airway, breathing, or circulation.",
+          "ja": "気道・呼吸・循環に明らかな異常は認めませんでした。"
+        },
+        {
+          "en": "There were no significant abnormalities in the initial laboratory studies.",
+          "ja": "初回の血液検査に明らかな異常は認めませんでした。"
+        },
+        {
+          "en": "There were no significant abnormalities in the chest radiograph.",
+          "ja": "胸部単純写真に明らかな異常は認めませんでした。"
+        }
+      ]
+    },
+    {
+      "text": "There may have been [X], but [Y].",
+      "kind": "frame",
+      "ja": "〜があった可能性はあるが、〜",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "There may have been some neurological impairment, but the level of consciousness improved considerably.",
+          "ja": "神経学的な障害があった可能性はありますが、意識レベルはかなり改善しました。"
+        },
+        {
+          "en": "There may have been some ongoing bleeding, but the vital signs remained stable.",
+          "ja": "出血が続いていた可能性はありますが、バイタルは安定していました。"
+        },
+        {
+          "en": "There may have been a delay in transfer, but the outcome was not affected.",
+          "ja": "搬送に遅れがあった可能性はありますが、転帰には影響しませんでした。"
+        }
+      ]
+    },
+    {
+      "text": "[X] appeared to have improved considerably.",
+      "kind": "frame",
+      "ja": "〜はかなり改善したように見えた",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "The patient's level of consciousness appeared to have improved considerably.",
+          "ja": "患者の意識レベルはかなり改善したように見えました。"
+        },
+        {
+          "en": "The respiratory status appeared to have improved considerably by the second day.",
+          "ja": "呼吸状態は2日目までにかなり改善したように見えました。"
+        },
+        {
+          "en": "The perfusion appeared to have improved considerably after resuscitation.",
+          "ja": "蘇生後、灌流はかなり改善したように見えました。"
+        }
+      ]
+    },
+    {
+      "text": "The patient was received in [X], where we performed [Y].",
+      "kind": "frame",
+      "ja": "〜で患者を受け入れ、そこで〜を行った",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "The patient was received in the CT room, where we performed an ABCD assessment.",
+          "ja": "CT室で患者を受け入れ、そこでABCD評価を行いました。"
+        },
+        {
+          "en": "The patient was received in the resuscitation bay, where we performed a FAST exam.",
+          "ja": "初療室で患者を受け入れ、そこでFASTを行いました。"
+        },
+        {
+          "en": "The patient was received in the hybrid suite, where we performed damage control surgery.",
+          "ja": "ハイブリッド手術室で患者を受け入れ、そこでダメージコントロール手術を行いました。"
+        }
+      ]
+    },
+    {
+      "text": "[X] was able to [V].",
+      "kind": "frame",
+      "ja": "〜は〜することができた",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "The patient was able to speak.",
+          "ja": "患者は発語が可能でした。"
+        },
+        {
+          "en": "The patient was able to follow simple commands.",
+          "ja": "患者は簡単な指示に従うことができました。"
+        },
+        {
+          "en": "He was able to maintain his own airway.",
+          "ja": "自力で気道を保持することができました。"
+        }
+      ]
+    },
+    {
+      "text": "perform an ABCD assessment",
+      "kind": "colloc",
+      "ja": "ABCD評価を行う",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We performed an ABCD assessment on arrival.",
+          "ja": "到着時にABCD評価を行いました。"
+        },
+        {
+          "en": "An ABCD assessment was performed before transfer to CT.",
+          "ja": "CT搬送前にABCD評価を行いました。"
+        }
+      ]
+    },
+    {
+      "text": "emergency uncrossmatched type O blood",
+      "kind": "colloc",
+      "ja": "緊急用のクロスマッチ未実施O型血",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Emergency uncrossmatched type O blood was transfused in the resuscitation bay.",
+          "ja": "初療室で緊急用のO型血を輸血しました。"
+        },
+        {
+          "en": "Two units of emergency uncrossmatched type O blood were given before crossmatch became available.",
+          "ja": "クロスマッチが揃うまでに、緊急O型血を2単位投与しました。"
+        }
+      ]
+    },
+    {
+      "text": "the airway, breathing, or circulation",
+      "kind": "colloc",
+      "ja": "気道・呼吸・循環",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "There was no compromise of the airway, breathing, or circulation.",
+          "ja": "気道・呼吸・循環の破綻はありませんでした。"
+        },
+        {
+          "en": "We reassessed the airway, breathing, and circulation after the intervention.",
+          "ja": "処置後に気道・呼吸・循環を再評価しました。"
+        }
+      ]
+    },
+    {
+      "text": "The airway was patent.",
+      "kind": "fixed",
+      "ja": "気道は開通していた",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "The airway was patent.",
+          "ja": "気道は開通していました。"
+        }
+      ]
+    },
+    {
+      "text": "Breathing was unlabored.",
+      "kind": "fixed",
+      "ja": "呼吸は努力様ではなかった",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Breathing was unlabored.",
+          "ja": "呼吸は努力様ではありませんでした。"
+        }
+      ]
+    },
+    {
+      "text": "The pupils were equal bilaterally with normal light reflexes.",
+      "kind": "fixed",
+      "ja": "瞳孔は両側同大、対光反射は正常",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "The pupils were equal bilaterally with normal light reflexes.",
+          "ja": "瞳孔は両側同大で、対光反射は正常でした。"
+        }
+      ]
+    },
+    {
+      "text": "There were no significant external injuries.",
+      "kind": "fixed",
+      "ja": "明らかな外表所見は認めなかった",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "There were no significant external injuries.",
+          "ja": "明らかな外表所見は認めませんでした。"
+        }
+      ]
+    },
+    {
+      "text": "Regarding [X], [Y].",
+      "kind": "frame",
+      "ja": "〜については、〜",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Regarding the respiratory status, we were able to wean him off the ventilator this morning.",
+          "ja": "呼吸状態については、今朝人工呼吸器から離脱できました。"
+        },
+        {
+          "en": "Regarding the antibiotics, we narrowed the coverage once the cultures came back.",
+          "ja": "抗菌薬については、培養結果が出た時点でスペクトラムを狭めました。"
+        },
+        {
+          "en": "Regarding the renal function, the creatinine has been trending down since we stopped the contrast.",
+          "ja": "腎機能については、造影剤を中止して以降クレアチニンは低下傾向です。"
+        }
+      ]
+    },
+    {
+      "text": "We are currently managing [X] with [Y].",
+      "kind": "frame",
+      "ja": "現在〜を〜で管理している",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We are currently managing fluid removal with furosemide.",
+          "ja": "現在、除水はフロセミドで管理しています。"
+        },
+        {
+          "en": "We are currently managing his agitation with dexmedetomidine rather than propofol.",
+          "ja": "現在、不穏はプロポフォールではなくデクスメデトミジンで管理しています。"
+        },
+        {
+          "en": "We are currently managing the hypotension with noradrenaline alone.",
+          "ja": "現在、低血圧はノルアドレナリン単剤で管理しています。"
+        }
+      ]
+    },
+    {
+      "text": "[X] is being administered at [Y] for [Z].",
+      "kind": "frame",
+      "ja": "〜を〜の量で、〜の目的で投与している",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Dobutamine is being administered at 2.4 micrograms per kilogram per minute for inotropic support.",
+          "ja": "強心目的で、ドブタミンを2.4γで投与しています。"
+        },
+        {
+          "en": "Noradrenaline is being administered at 0.08 micrograms per kilogram per minute for blood pressure support.",
+          "ja": "昇圧目的で、ノルアドレナリンを0.08γで投与しています。"
+        },
+        {
+          "en": "Insulin is being administered at two units per hour for glycemic control.",
+          "ja": "血糖管理の目的で、インスリンを毎時2単位で投与しています。"
+        }
+      ]
+    },
+    {
+      "text": "with [X] now down to [Y]",
+      "kind": "frame",
+      "ja": "〜が〜まで下がった状態で（付帯状況のwith）",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "His condition has stabilized, with the CRP now down to around 100.",
+          "ja": "CRPが100前後まで下がり、状態は安定しています。"
+        },
+        {
+          "en": "The septic picture is improving, with the lactate now down to 1.8.",
+          "ja": "乳酸が1.8まで下がり、敗血症の病像は改善しています。"
+        },
+        {
+          "en": "We are weaning the support, with the noradrenaline now down to 0.03 micrograms per kilogram per minute.",
+          "ja": "ノルアドレナリンが0.03γまで下がり、サポートを漸減しています。"
+        }
+      ]
+    },
+    {
+      "text": "A follow-up [X] is scheduled for [Y].",
+      "kind": "frame",
+      "ja": "フォローの〜を〜に予定している",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "As for the cerebral infarction, a follow-up CT scan is scheduled for today.",
+          "ja": "脳梗塞については、本日フォローのCTを予定しています。"
+        },
+        {
+          "en": "A follow-up echocardiogram is scheduled for tomorrow morning.",
+          "ja": "明日の朝、フォローの心エコーを予定しています。"
+        },
+        {
+          "en": "A follow-up chest radiograph is scheduled for after the drain is removed.",
+          "ja": "ドレーン抜去後に、フォローの胸部単純写真を予定しています。"
+        }
+      ]
+    }
+  ]
+}

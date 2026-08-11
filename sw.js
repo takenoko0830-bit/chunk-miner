@@ -2,10 +2,11 @@
    目的は「電波のない移動中でも練習タブが動くこと」だけ。
    ネットワーク優先にしてあるので、デプロイした新版は次回起動時にそのまま反映される。 */
 
-const V = 'cm-v1';
+const V = 'cm-v2';
 const ASSETS = [
   './',
   './index.html',
+  './chunks.json',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',

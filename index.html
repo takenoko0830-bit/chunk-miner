@@ -99,6 +99,7 @@ select{background:var(--ink);color:var(--paper);border:1px solid var(--line);bor
 
 .warn{border:1px solid var(--amberdim);background:#1D1608;border-radius:5px;padding:12px 14px;
       font-size:12px;line-height:1.7;color:var(--amber);margin-bottom:16px}
+.warn.sync{border-color:#28513F;background:#0F1D17;color:var(--green)}
 button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 h2{font-size:13px;letter-spacing:.06em;color:var(--muted);font-weight:500;margin:0 0 12px}
 .hr{height:1px;background:var(--line);margin:22px 0}
@@ -190,6 +191,7 @@ let busy     = '';
 let msg      = null;
 let sortBy   = 'added';
 let editing  = null;   // 編集中のチャンク id
+let syncMsg  = null;   // 共有ライブラリの取り込み結果
 
 const save = () => { store.set('cm.chunks',chunks); store.set('cm.set',settings); };
 
@@ -427,6 +429,52 @@ function importJSON(file){
   fr.readAsText(file);
 }
 
+/* ================= 共有ライブラリの同期 =================
+   リポジトリの chunks.json が正本。起動時に取得して統合する（リポジトリ → 端末の一方向）。
+   ここでは seen を「加算」しないこと。加算にすると、アプリを開くたびに遭遇回数が
+   際限なく増え、2.3 の「よく出る型が浮かび上がる」という指標が壊れる。
+   正本側の seen が権威なので max を取る。手動の JSON 読み込みは加算のままでよい。 */
+const SYNC_URL = 'chunks.json';
+
+async function syncLibrary(){
+  let res;
+  try{ res = await fetch(SYNC_URL, {cache:'no-cache'}); }
+  catch(e){ return; }                       // オフライン。黙って諦める
+  if(!res.ok) return;
+
+  let arr;
+  try{
+    const d = await res.json();
+    arr = Array.isArray(d) ? d : d.chunks;
+  }catch(e){ return; }
+  if(!Array.isArray(arr)) return;
+
+  let add=0, up=0;
+  arr.forEach((p,i)=>{
+    if(!p || !p.text) return;
+    const k = norm(p.text);
+    const hit = chunks.find(c=>norm(c.text)===k);
+    if(hit){
+      let changed = false;
+      const s = Math.max(hit.seen||1, p.seen||1);
+      if(s !== hit.seen){ hit.seen = s; changed = true; }
+      if(p.ja && p.ja !== hit.ja){ hit.ja = p.ja; changed = true; }
+      (p.examples||[]).forEach(e=>{
+        if(e && e.en && !hit.examples.some(x=>x.en===e.en)){ hit.examples.push(e); changed = true; }
+      });
+      if(changed) up++;
+    } else {
+      chunks.unshift({id:'r'+Date.now()+'-'+i, text:p.text, kind:p.kind||'frame', ja:p.ja||'',
+                      examples:p.examples||[], on:p.on!==false, seen:p.seen||1, added:Date.now()+i});
+      add++;
+    }
+  });
+
+  if(add || up){ save(); queue=[]; idx=0; }
+  syncMsg = {add, up};
+  render();
+}
+
 /* ================= 描画 ================= */
 const TABS = [['in','取り込み'],['lib','チャンク'],['play','練習'],['set','設定']];
 
@@ -436,6 +484,8 @@ function render(){
 
   document.getElementById('warn').innerHTML =
     (!store.ok ? `<div class="warn">このブラウザでは保存領域が使えないため、閉じると内容が消えます。ファイルをダウンロードして直接開くと保存されます。</div>` : '') +
+    (syncMsg && (syncMsg.add || syncMsg.up)
+      ? `<div class="warn sync">共有ライブラリから取り込みました。新規 ${syncMsg.add} 件、更新 ${syncMsg.up} 件。</div>` : '') +
     (!apiKey ? `<div class="warn">APIキーが未設定です。抽出と例文生成には「設定」タブでキーを入れてください。再生だけなら設定なしで動きます。</div>` : '');
 
   const v = document.getElementById('view');
@@ -617,6 +667,21 @@ function viewSet(){
   <div class="hr"></div>
 
   <div class="box">
+    <h2>共有ライブラリ</h2>
+    <div class="bar" style="margin-top:0">
+      <button class="btn" id="doSync" ${busy==='sync'?'disabled':''}>${busy==='sync'?'取り込み中…':'今すぐ取り込む'}</button>
+      <span class="note" style="margin-left:auto">${esc(SYNC_URL)}</span>
+    </div>
+    <p class="note" style="margin-top:12px">
+      アプリを開くたびに自動で取り込まれるので、通常はこのボタンを押す必要はありません。
+      配信元のチャンクが正本で、遭遇回数はそちらの値が優先されます（取り込みで増えることはありません）。
+      この端末で加えた編集やオンオフは配信元には戻りません。
+    </p>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="box">
     <h2>使い方のメモ</h2>
     <p class="note">
       <b>iPhone</b>：Safari で開き、共有ボタンから「ホーム画面に追加」。アドレスバーのないアプリとして起動します。
@@ -721,6 +786,13 @@ function bind(){
     if($('clearKey')) $('clearKey').onclick=()=>{
       apiKey=''; store.set('cm.key',''); msg={t:'ok',s:'キーを削除しました。'}; render();
     };
+    if($('doSync')) $('doSync').onclick=async()=>{
+      busy='sync'; syncMsg=null; render();
+      await syncLibrary();
+      busy='';
+      if(syncMsg && !syncMsg.add && !syncMsg.up) msg={t:'ok',s:'すでに最新です。'};
+      render();
+    };
     if($('doExport')) $('doExport').onclick=exportJSON;
     if($('doImport')) $('doImport').onclick=()=>$('file').click();
     if($('file')) $('file').onchange=e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); };
@@ -740,6 +812,9 @@ if('serviceWorker' in navigator && location.protocol.startsWith('http')){
 }
 
 render();
+
+/* 起動時に共有ライブラリを取り込む。file:// では fetch できないので試みない */
+if(location.protocol.startsWith('http')) syncLibrary();
 </script>
 </body>
 </html>
