@@ -200,6 +200,11 @@ const save = () => { store.set('cm.chunks',chunks); store.set('cm.set',settings)
 
 /* ================= 音声 ================= */
 let voices=[], queue=[], idx=0, playing=false, token=0;
+/* 初回 render() が済むまで loadVoices() からの再描画を抑止する。
+   loadVoices() はスクリプト評価中にも走るが、その時点では const TABS などが
+   まだ初期化されておらず（TDZ）、render() を呼ぶと ReferenceError で全体が止まる。
+   Safari は getVoices() が同期で返るため必ず踏む。 */
+let booted = false;
 
 function loadVoices(){
   if(!window.speechSynthesis) return;
@@ -214,7 +219,7 @@ function loadVoices(){
     const ja = v.filter(x=>x.lang.toLowerCase().startsWith('ja'));
     settings.jaV = (ja.find(x=>/kyoko|o-ren/i.test(x.name)) || ja[0] || {}).voiceURI || '';
   }
-  if(tab==='play') render();
+  if(booted && tab==='play') render();
 }
 if(window.speechSynthesis){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 
@@ -815,6 +820,7 @@ if('serviceWorker' in navigator && location.protocol.startsWith('http')){
 }
 
 render();
+booted = true;
 
 /* 起動時に共有ライブラリを取り込む。file:// では fetch できないので試みない */
 if(location.protocol.startsWith('http')) syncLibrary();

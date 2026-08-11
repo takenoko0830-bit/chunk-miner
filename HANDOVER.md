@@ -146,6 +146,12 @@ localStorage キー: `cm.chunks` / `cm.set` / `cm.key` / `cm.model` / `cm.raw`
   localStorage が空の初回起動で `chunks` と `SEED` が同じ配列を指す。以降の `unshift` や編集が
   定数 `SEED` を書き換えてしまい、「初期状態に戻す」が汚染された SEED を復元することになる
 - **起動は常に練習タブ**: 以前は `navigator.standalone` で判定していたが、効かない環境があったため無条件にした
+- **`loadVoices()` から初回 render() より前に描画しないこと**: `loadVoices()` はスクリプト評価中にも
+  走る。その時点では `const TABS` などがまだ TDZ にあり、`render()` を呼ぶと
+  `ReferenceError: Cannot access 'TABS' before initialization` でスクリプト全体が停止し、
+  ヘッダだけ出て中身が空の画面になる。`booted` フラグで抑止している。
+  **Safari は `getVoices()` が同期で返るため必ず踏む。Chromium 系は読み込み時点で空を返すので
+  再現しない** — ブラウザ差で通り抜けるので、この種の初期化順の変更は Safari で確認すること
 - **同期の `seen` は加算しないこと**: `importJSON()` は `hit.seen += (p.seen||1)` と加算するが、
   `syncLibrary()` は `Math.max(ローカル, リモート)` を取る。同期は起動のたびに走るので、
   加算にすると**アプリを開くだけで遭遇回数が際限なく増え、2.3 の指標が壊れる**。
