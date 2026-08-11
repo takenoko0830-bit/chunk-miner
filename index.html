@@ -74,6 +74,9 @@ select{background:var(--ink);color:var(--paper);border:1px solid var(--line);bor
     display:flex;flex-direction:column;gap:8px}
 .ex li{font-size:13px;line-height:1.5}
 .ex span{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.ex span.pc{display:inline;font-size:10px;color:var(--muted);border:1px solid var(--line);
+            border-radius:3px;padding:1px 6px;margin-left:6px;white-space:nowrap;
+            font-variant-numeric:tabular-nums}
 
 .stage{border:1px solid var(--line);border-radius:6px;background:var(--panel);
        padding:30px 24px 22px;min-height:270px;display:flex;flex-direction:column;justify-content:center}
@@ -182,8 +185,24 @@ const slot = s => esc(s).replace(/\[([^\]]*)\]/g,'<em>[$1]</em>');
 /* SEED をそのまま渡すと参照が共有され、unshift や編集が定数 SEED を書き換えてしまう。
    そうなると「初期状態に戻す」が汚染された SEED を復元することになる。必ず複製を渡すこと。 */
 let chunks   = store.get('cm.chunks', null) || JSON.parse(JSON.stringify(SEED));
-let settings = Object.assign({rate:1,repeat:2,gap:1.2,jaMode:'show',shuffle:false,loop:true,enV:'',jaV:'',
+let settings = Object.assign({rate:1,repeat:2,gap:1.8,jaMode:'show',shuffle:false,loop:true,enV:'',jaV:'',
                               topN:0,maxCand:5}, store.get('cm.set',{}));
+
+/* 既存利用者の設定を一度だけ現行の既定に寄せる。
+   速度は標準固定、復唱の間は旧「長め」を標準に、英語の声は Samantha を選び直す。 */
+if(!settings.v2){
+  settings.rate = 1;
+  if(settings.gap === 1.2 || settings.gap === 0.8) settings.gap = 1.8;
+  settings.enV = '';            // 空にすると loadVoices() が新しい優先順位で選び直す
+  settings.v2 = true;
+}
+settings.rate = 1;              // 速度の切り替えは廃止。常に標準
+
+/* 例文ごとの練習回数。キーは英文そのもの。
+   id や並び順ではなく本文で持つので、同期・並べ替え・再取り込みでも壊れない。 */
+let plays = store.get('cm.plays', {});
+const playCount = en => plays[en] || 0;
+const bumpPlay = en => { plays[en] = playCount(en) + 1; store.set('cm.plays', plays); };
 let apiKey   = store.get('cm.key','');
 let model    = store.get('cm.model','claude-sonnet-5');
 /* 起動は常に練習タブ。standalone 判定に頼ると効かない環境があったため、条件を外した */
@@ -213,7 +232,10 @@ function loadVoices(){
   voices = v;
   if(!settings.enV){
     const en = v.filter(x=>x.lang.toLowerCase().startsWith('en'));
-    settings.enV = (en.find(x=>/samantha|ava|serena|daniel/i.test(x.name)) || en[0] || {}).voiceURI || '';
+    /* Samantha を最優先。まとめて正規表現に入れると音声一覧の並び順で拾われるものが変わる */
+    settings.enV = (en.find(x=>/samantha/i.test(x.name))
+                 || en.find(x=>/ava|serena|daniel/i.test(x.name))
+                 || en[0] || {}).voiceURI || '';
   }
   if(!settings.jaV){
     const ja = v.filter(x=>x.lang.toLowerCase().startsWith('ja'));
@@ -250,7 +272,10 @@ function build(){
   const out=[];
   activeChunks().forEach(c=>{
     c.examples.forEach((e,j)=>out.push({en:e.en,ja:e.ja,chunk:c.text,kind:c.kind,key:c.id+'-'+j})); });
-  if(settings.shuffle) for(let i=out.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [out[i],out[j]]=[out[j],out[i]]; }
+  if(settings.shuffle==='least')      // 練習回数の少ない例文から回す。放置されるものを作らないため
+    out.sort((a,b)=>playCount(a.en)-playCount(b.en));
+  else if(settings.shuffle)
+    for(let i=out.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [out[i],out[j]]=[out[j],out[i]]; }
   return out;
 }
 function stop(){ token++; if(window.speechSynthesis) speechSynthesis.cancel(); playing=false; render(); }
@@ -272,6 +297,7 @@ async function run(start, list){
       if(settings.gap>0){ const g=estMs(it.en,settings.rate)*settings.gap; drain(g); await wait(g,tk); }
       else await wait(300,tk);
     }
+    bumpPlay(it.en);   // 繰り返しを最後まで通したら1回とする。途中で止めた分は数えない
     i++;
   }
   playing=false; render();
@@ -570,7 +596,7 @@ function viewLib(){
         <button class="mini x" data-del="${c.id}" title="削除">×</button>
       </div>
       ${c.examples.length?`<ul class="ex">${c.examples.map(e=>
-        `<li>${esc(e.en)}${e.ja?`<span>${esc(e.ja)}</span>`:''}</li>`).join('')}</ul>`:''}
+        `<li>${esc(e.en)} <span class="pc">練習 ${playCount(e.en)}回</span>${e.ja?`<span>${esc(e.ja)}</span>`:''}</li>`).join('')}</ul>`:''}
     </div>`).join('')}</div>
   <p class="note" style="margin-top:14px">チェックを外した型は練習キューから除かれます。遭遇回数が伸びた型ほど、実際の現場でよく使われている表現です。</p>`;
 }
@@ -611,7 +637,8 @@ function viewPlay(){
   const enOpts = voices.filter(v=>v.lang.toLowerCase().startsWith('en'));
   const jaOpts = voices.filter(v=>v.lang.toLowerCase().startsWith('ja'));
   return `<div class="stage">${ cur ? `
-      <div class="eye"><span class="eyec">${slot(cur.chunk)}</span><span class="tag ${cur.kind}">${KIND[cur.kind]}</span></div>
+      <div class="eye"><span class="eyec">${slot(cur.chunk)}</span><span class="tag ${cur.kind}">${KIND[cur.kind]}</span>
+        <span class="count">練習 ${playCount(cur.en)}回</span></div>
       <p class="en">${esc(cur.en)}</p>
       ${settings.jaMode!=='off'&&cur.ja?`<p class="ja">${esc(cur.ja)}</p>`:''}
       <div class="breath"><i id="drain"></i></div>`
@@ -624,11 +651,10 @@ function viewPlay(){
   </div>
   <div class="set">
     <div class="f"><span class="l">練習範囲</span>${seg('topN',[[0,'全部'],[10,'上位10'],[20,'上位20'],[30,'上位30']],settings.topN)}</div>
-    <div class="f"><span class="l">速度</span>${seg('rate',[[1,'標準'],[1.5,'1.5倍']],settings.rate)}</div>
-    <div class="f"><span class="l">繰り返し</span>${seg('repeat',[[1,'1回'],[2,'2回'],[3,'3回']],settings.repeat)}</div>
-    <div class="f"><span class="l">復唱の間</span>${seg('gap',[[0,'なし'],[0.8,'短め'],[1.2,'標準'],[1.8,'長め']],settings.gap)}</div>
+    <div class="f"><span class="l">繰り返し</span>${seg('repeat',[[1,'1'],[2,'2'],[3,'3'],[4,'4'],[5,'5']],settings.repeat)}</div>
+    <div class="f"><span class="l">復唱の間</span>${seg('gap',[[0,'なし'],[1.2,'短め'],[1.8,'標準'],[2.5,'長め']],settings.gap)}</div>
     <div class="f"><span class="l">日本語</span>${seg('jaMode',[['show','表示'],['speak','読み上げ'],['off','なし']],settings.jaMode)}</div>
-    <div class="f"><span class="l">順序</span>${seg('shuffle',[[false,'順番'],[true,'シャッフル']],settings.shuffle)}</div>
+    <div class="f"><span class="l">順序</span>${seg('shuffle',[[false,'順番'],[true,'シャッフル'],['least','練習が少ない順']],settings.shuffle)}</div>
     <div class="f"><span class="l">ループ</span>${seg('loop',[[true,'する'],[false,'しない']],settings.loop)}</div>
     <div class="f"><span class="l">英語の声</span><select id="enV">${enOpts.map(v=>
       `<option value="${esc(v.voiceURI)}" ${v.voiceURI===settings.enV?'selected':''}>${esc(v.name)}</option>`).join('')}</select></div>
@@ -637,7 +663,8 @@ function viewPlay(){
   </div>
   <p class="note" style="margin-top:14px">設定は次の例文から反映されます。琥珀色の線が消えるまでが復唱の間です。画面を消すと再生も止まります。<br>
     「練習範囲」は遭遇回数の多い順に絞り込みます。上位30に絞ると、実際の現場で繰り返し出てきた型だけが回ります。${
-      settings.topN ? `いまは ${chunks.filter(c=>c.on).length} 件のうち上位 ${activeChunks().length} 件です。` : ''}</p>`;
+      settings.topN ? `いまは ${chunks.filter(c=>c.on).length} 件のうち上位 ${activeChunks().length} 件です。` : ''}<br>
+    「練習が少ない順」にすると、練習回数の少ない例文から回ります。繰り返しを最後まで通した例文が1回と数えられます。</p>`;
 }
 
 function viewSet(){
@@ -805,8 +832,10 @@ function bind(){
     if($('doImport')) $('doImport').onclick=()=>$('file').click();
     if($('file')) $('file').onchange=e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); };
     if($('doReset')) $('doReset').onclick=()=>{
-      if(!confirm('保存したチャンクをすべて消して初期状態に戻します。よろしいですか？')) return;
-      chunks=JSON.parse(JSON.stringify(SEED)); save(); queue=[]; idx=0;
+      if(!confirm('保存したチャンクと練習回数をすべて消して初期状態に戻します。よろしいですか？')) return;
+      chunks=JSON.parse(JSON.stringify(SEED));
+      plays={}; store.set('cm.plays',plays);
+      save(); queue=[]; idx=0;
       msg={t:'ok',s:'初期状態に戻しました。'}; render();
     };
   }
