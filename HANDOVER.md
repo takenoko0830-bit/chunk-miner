@@ -142,6 +142,11 @@ localStorage キー: `cm.chunks` / `cm.set` / `cm.key` / `cm.model` / `cm.raw`
   再生キューを作る `build()` と、画面に出す件数表示の両方がこれを使う
 - **iOS の音声解禁**: `prime()` がクリックハンドラの同期実行中に音量0の発話を1回流している。
   これがないと iOS では以降すべて無音になる。`toggle()` / `jump()` の先頭から呼ぶこと
+- **`SEED` は必ず複製して使うこと**: `store.get('cm.chunks', SEED)` のように既定値をそのまま渡すと、
+  localStorage が空の初回起動で `chunks` と `SEED` が同じ配列を指す。以降の `unshift` や編集が
+  定数 `SEED` を書き換えてしまい、「初期状態に戻す」が汚染された SEED を復元することになる
+- **ホーム画面起動は練習タブで開く**: `navigator.standalone`（iOS）と `display-mode: standalone`
+  の両方で判定する。ブラウザで開いたときは取り込みのまま
 - **同期の `seen` は加算しないこと**: `importJSON()` は `hit.seen += (p.seen||1)` と加算するが、
   `syncLibrary()` は `Math.max(ローカル, リモート)` を取る。同期は起動のたびに走るので、
   加算にすると**アプリを開くだけで遭遇回数が際限なく増え、2.3 の指標が壊れる**。
