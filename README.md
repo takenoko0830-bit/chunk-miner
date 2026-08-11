@@ -1,5 +1,7 @@
 # Chunk Miner
 
+**公開先: https://takenoko0830-bit.github.io/chunk-miner/**
+
 英語の文章を再利用可能な「チャンク」に分解して蓄積し、そこから生成した例文を音声で流してリピート練習するアプリ。
 
 設計の背景・意図・却下した案は [HANDOVER.md](HANDOVER.md) を参照。**実装に手を入れる前に必ず読むこと。**
@@ -25,37 +27,31 @@ python3 -m http.server 8765
 
 `http://localhost:8765/` を開きます。
 
-## GitHub Pages に公開する
+## GitHub Pages（設定済み — 2026-08-11）
 
-iPhone から使うにはこれが必要です。`file://` では Safari が JS を制限するため、
-ホスティングに置かないと iPhone では動きません。
+`file://` では Safari が JS を制限するため、iPhone から使うにはホスティングが必要。
+以下は設定済みの内容の記録。作り直すときはこの手順をなぞる。
 
-### 1. GitHub にリポジトリを作る
+- リポジトリ: `takenoko0830-bit/chunk-miner`（**Public**）
+- Pages: Source = `Deploy from a branch` / Branch = `main` / `(root)`
+- 公開先: https://takenoko0830-bit.github.io/chunk-miner/
 
-github.com で新規リポジトリを作成します（例: `chunk-miner`）。README や .gitignore の
-自動生成はオフにしてください。
+Public が必須（Private で Pages を使うには GitHub Pro 以上）。したがって `index.html` の
+初期チャンク14件、同梱のサンプル英文、`chunks-*.json`、この README と HANDOVER.md は
+誰でも閲覧できる。APIキーはリポジトリには入らず各端末のブラウザにのみ保存されるので、
+公開されるのはアプリのコードとチャンクデータだけ。
 
-**Public にする必要があります。** GitHub Pages を Private リポジトリで使うには GitHub Pro 以上が要ります。
-Public にすると `index.html` の中身（同梱している症例プレゼンのサンプル英文と初期チャンク14件を含む）が
-誰でも閲覧できる状態になります。APIキーはリポジトリには入らず、各端末のブラウザにのみ保存されるので、
-公開されるのはアプリのコードと初期データだけです。
+### 認証について
 
-### 2. push する
+push は HTTPS + Personal Access Token（classic）。GitHub はパスワード認証を廃止している。
 
-`YOUR-NAME` を自分のアカウント名に置き換えて実行します。
+- スコープは **`public_repo` だけでよい**。親の `repo` は非公開リポジトリまで含めた全権限で、
+  この用途には過剰
+- 初回の push でトークンを入力すると macOS のキーチェーンに保存され、以降は聞かれない
+  （`credential.helper = osxkeychain`）
+- ターミナル.app で実行すること。非対話シェルだと認証プロンプトに応答できず固まる
 
-```bash
-git remote add origin https://github.com/YOUR-NAME/chunk-miner.git && git push -u origin main
-```
-
-### 3. Pages を有効にする
-
-リポジトリの **Settings → Pages** を開き、**Source** を `Deploy from a branch`、
-ブランチを `main` / `/ (root)` に設定して Save。1〜2分で公開されます。
-
-公開先: `https://YOUR-NAME.github.io/chunk-miner/`
-
-### 4. iPhone に入れる
+### iPhone に入れる
 
 1. Safari で上の URL を開く
 2. 共有ボタン → **ホーム画面に追加**
