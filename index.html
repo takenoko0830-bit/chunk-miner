@@ -84,6 +84,9 @@ select{background:var(--ink);color:var(--paper);border:1px solid var(--line);bor
 .eyec{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);line-height:1.5}
 .en{font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:clamp(23px,4.2vw,44px);
     line-height:1.3;letter-spacing:-.01em;margin:0 0 15px}
+/* 考える間は英文を伏せる。読めてしまうと引き出す練習にならない。
+   visibility なので高さは保たれ、表示が切り替わっても画面が跳ねない */
+.en.veil{visibility:hidden}
 .ja{font-size:14px;color:var(--muted);line-height:1.7;margin:0}
 .breath{height:2px;background:var(--amberdim);border-radius:2px;margin-top:22px;overflow:hidden}
 .breath i{display:block;height:100%;background:var(--amber);width:100%;transform-origin:left;transform:scaleX(0)}
@@ -186,7 +189,7 @@ const slot = s => esc(s).replace(/\[([^\]]*)\]/g,'<em>[$1]</em>');
    そうなると「初期状態に戻す」が汚染された SEED を復元することになる。必ず複製を渡すこと。 */
 let chunks   = store.get('cm.chunks', null) || JSON.parse(JSON.stringify(SEED));
 let settings = Object.assign({rate:1,repeat:2,gap:1.8,jaMode:'show',shuffle:false,loop:true,enV:'',jaV:'',
-                              topN:0,maxCand:5}, store.get('cm.set',{}));
+                              topN:0,maxCand:5,think:3,lesson:20}, store.get('cm.set',{}));
 
 /* 既存利用者の設定を一度だけ現行の既定に寄せる。
    速度は標準固定、復唱の間は旧「長め」を標準に、英語の声は Samantha を選び直す。 */
@@ -219,6 +222,8 @@ const save = () => { store.set('cm.chunks',chunks); store.set('cm.set',settings)
 
 /* ================= 音声 ================= */
 let voices=[], queue=[], idx=0, playing=false, token=0;
+let thinking=false;                    // 考える間かどうか。この間は英文を隠す
+let lessonDone=false, lessonPlayed=0;  // レッスンの進捗
 /* 初回 render() が済むまで loadVoices() からの再描画を抑止する。
    loadVoices() はスクリプト評価中にも走るが、その時点では const TABS などが
    まだ初期化されておらず（TDZ）、render() を呼ぶと ReferenceError で全体が止まる。
@@ -280,16 +285,39 @@ function build(){
 }
 function stop(){ token++; if(window.speechSynthesis) speechSynthesis.cancel(); playing=false; render(); }
 
+/* 考える間の長さ。日本語の手がかりのあとに置き、その間は英文を隠す。
+   聞いて真似る（シャドーイング）から、自分で引き出す（プロダクション）練習に変わる。 */
+function thinkMs(en){
+  const t = settings.think;
+  if(t === 'auto') return Math.max(1500, estMs(en, 1) * 1.2);
+  return (Number(t) || 0) * 1000;
+}
+
 async function run(start, list){
-  const tk = ++token; playing=true;
+  const tk = ++token; playing=true; lessonDone=false; lessonPlayed=0;
+  const limit = settings.lesson || Infinity;   // 0 は無制限
   let items=list, i=start;
   while(true){
     if(tk!==token) return;
+    if(lessonPlayed >= limit){ lessonDone=true; break; }   // レッスン終了
     if(i>=items.length){ if(!settings.loop) break; items=build(); queue=items; i=0; if(!items.length) break; }
-    idx=i; render();
+    idx=i; thinking=false; render();
     const it=items[i];
     const ev=voices.find(v=>v.voiceURI===settings.enV), jv=voices.find(v=>v.voiceURI===settings.jaV);
-    if(settings.jaMode==='speak' && it.ja){ await speak(it.ja,'ja-JP',1,jv); if(tk!==token) return; await wait(250,tk); }
+
+    if(settings.jaMode==='speak' && it.ja){ await speak(it.ja,'ja-JP',1,jv); if(tk!==token) return; }
+    /* 日本語の手がかりがあるときだけ考える間を置く。jaMode='off' では手がかりがないので置かない */
+    const th = (settings.jaMode!=='off' && it.ja) ? thinkMs(it.en) : 0;
+    if(th > 0){
+      thinking=true; render(); drain(th);
+      await wait(th, tk);
+      thinking=false;
+      if(tk!==token) return;
+      render();
+    } else if(settings.jaMode==='speak' && it.ja){
+      await wait(250, tk);
+    }
+
     for(let k=0;k<settings.repeat;k++){
       if(tk!==token) return;
       await speak(it.en,'en-US',settings.rate,ev);
@@ -303,9 +331,11 @@ async function run(start, list){
       if(settings.gap>0){ const g=estMs(it.en,settings.rate)*settings.gap; drain(g); await wait(g,tk); }
       else await wait(300,tk);
     }
-    i++;
+    i++; lessonPlayed++;
   }
-  playing=false; render();
+  /* 次のレッスンはここから続ける。1日に何レッスンやっても同じ場所を繰り返さない */
+  idx = items.length ? i % items.length : 0;
+  playing=false; thinking=false; render();
 }
 function drain(ms){
   const el=document.getElementById('drain'); if(!el) return;
@@ -329,7 +359,7 @@ function toggle(){
   queue=list; run(Math.min(idx,list.length-1), list);
 }
 function jump(d){
-  prime();
+  prime(); lessonDone=false;
   const list = queue.length ? queue : build();
   if(!list.length) return;
   const n=(idx+d+list.length)%list.length;
@@ -644,22 +674,28 @@ function viewPlay(){
   return `<div class="stage">${ cur ? `
       <div class="eye"><span class="eyec">${slot(cur.chunk)}</span><span class="tag ${cur.kind}">${KIND[cur.kind]}</span>
         <span class="count">再生 ${playCount(cur.en)}回</span></div>
-      <p class="en">${esc(cur.en)}</p>
+      <p class="en${thinking?' veil':''}">${esc(cur.en)}</p>
       ${settings.jaMode!=='off'&&cur.ja?`<p class="ja">${esc(cur.ja)}</p>`:''}
       <div class="breath"><i id="drain"></i></div>`
     : `<p class="note" style="text-align:center">例文がありません。「チャンク」タブで型を選ぶか、例文を増やしてください。</p>`}</div>
+  ${lessonDone?`<div class="warn sync" style="margin:16px 0 0">レッスン終了。${lessonPlayed}文を通しました。続けるなら「次のレッスン」へ。</div>`:''}
   <div class="bar">
-    <button class="btn pri" id="doPlay" style="min-width:104px" ${!queue.length?'disabled':''}>${playing?'停止':'再生'}</button>
+    <button class="btn pri" id="doPlay" style="min-width:124px" ${!queue.length?'disabled':''}>${
+      playing ? '停止' : (lessonDone ? '次のレッスン' : '再生')}</button>
     <button class="btn" id="doPrev" ${!queue.length?'disabled':''}>前へ</button>
     <button class="btn" id="doNext" ${!queue.length?'disabled':''}>次へ</button>
-    <span class="count">${queue.length?(idx+1)+' / '+queue.length:'0 / 0'} ・ ${activeChunks().length}チャンク</span>
+    <span class="count">${
+      settings.lesson && playing ? `レッスン ${lessonPlayed+1} / ${settings.lesson}文 ・ ` : ''
+    }${queue.length?(idx+1)+' / '+queue.length:'0 / 0'} ・ ${activeChunks().length}チャンク</span>
   </div>
   <div class="set">
+    <div class="f"><span class="l">レッスン</span>${seg('lesson',[[10,'10文'],[20,'20文'],[30,'30文'],[0,'区切らない']],settings.lesson)}</div>
+    <div class="f"><span class="l">考える間</span>${seg('think',[[0,'なし'],[3,'3秒'],[5,'5秒'],['auto','自動']],settings.think)}</div>
     <div class="f"><span class="l">練習範囲</span>${seg('topN',[[0,'全部'],[10,'上位10'],[20,'上位20'],[30,'上位30']],settings.topN)}</div>
     <div class="f"><span class="l">繰り返し</span>${seg('repeat',[[1,'1'],[2,'2'],[3,'3'],[4,'4'],[5,'5']],settings.repeat)}</div>
     <div class="f"><span class="l">復唱の間</span>${seg('gap',[[0,'なし'],[1.2,'短め'],[1.8,'標準'],[2.5,'長め']],settings.gap)}</div>
     <div class="f"><span class="l">日本語</span>${seg('jaMode',[['show','表示'],['speak','読み上げ'],['off','なし']],settings.jaMode)}</div>
-    <div class="f"><span class="l">順序</span>${seg('shuffle',[[false,'順番'],[true,'シャッフル'],['least','再生が少ない順']],settings.shuffle)}</div>
+    <div class="f"><span class="l">順序</span>${seg('shuffle',[[false,'順番'],[true,'シャッフル'],['least','少ない順']],settings.shuffle)}</div>
     <div class="f"><span class="l">ループ</span>${seg('loop',[[true,'する'],[false,'しない']],settings.loop)}</div>
     <div class="f"><span class="l">英語の声</span><select id="enV">${enOpts.map(v=>
       `<option value="${esc(v.voiceURI)}" ${v.voiceURI===settings.enV?'selected':''}>${esc(v.name)}</option>`).join('')}</select></div>
@@ -669,7 +705,9 @@ function viewPlay(){
   <p class="note" style="margin-top:14px">設定は次の例文から反映されます。琥珀色の線が消えるまでが復唱の間です。画面を消すと再生も止まります。<br>
     「練習範囲」は遭遇回数の多い順に絞り込みます。上位30に絞ると、実際の現場で繰り返し出てきた型だけが回ります。${
       settings.topN ? `いまは ${chunks.filter(c=>c.on).length} 件のうち上位 ${activeChunks().length} 件です。` : ''}<br>
-    「再生が少ない順」にすると、これまでの再生回数が少ない例文から回ります。回数は読み上げ1回ごとに増えるので、繰り返しを3回にしていれば1周で3増えます。</p>`;
+    順序の「少ない順」にすると、これまでの再生回数が少ない例文から回ります。回数は読み上げ1回ごとに増えるので、繰り返しを3回にしていれば1周で3増えます。<br>
+    <b>考える間</b>を置くと、日本語のあいだに英文が伏せられます。自分で言ってみてから正解を聞く練習になります。聞いて真似るだけより、口から出る英語は増えます。日本語を「なし」にしているときは手がかりがないので働きません。<br>
+    <b>レッスン</b>は決めた文数で区切ります。終わったら「次のレッスン」で続きから始まるので、同じ範囲を繰り返しません。1日に何レッスンやっても構いません。</p>`;
 }
 
 function viewSet(){
@@ -741,7 +779,7 @@ function viewSet(){
 function bind(){
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{
     if(b.dataset.tab!=='play' && playing) stop();
-    tab=b.dataset.tab; msg=null; editing=null; render();
+    tab=b.dataset.tab; msg=null; editing=null; lessonDone=false; render();
   });
 
   const $ = id => document.getElementById(id);
