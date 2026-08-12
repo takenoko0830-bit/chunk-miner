@@ -294,10 +294,15 @@ async function run(start, list){
       if(tk!==token) return;
       await speak(it.en,'en-US',settings.rate,ev);
       if(tk!==token) return;
+      bumpPlay(it.en);   // 読み上げ1回ごとに加算。繰り返し3回なら1周で3増える。
+                         // 途中で止めた分は上の token 判定で return するので数えない
+      /* 繰り返しの途中でも数字を追随させる。全体を render() すると
+         再生中に毎回DOMを作り直すことになるので、この一箇所だけ書き換える */
+      const pcEl = document.querySelector('.eye .count');
+      if(pcEl) pcEl.textContent = `再生 ${playCount(it.en)}回`;
       if(settings.gap>0){ const g=estMs(it.en,settings.rate)*settings.gap; drain(g); await wait(g,tk); }
       else await wait(300,tk);
     }
-    bumpPlay(it.en);   // 繰り返しを最後まで通したら1回とする。途中で止めた分は数えない
     i++;
   }
   playing=false; render();
@@ -596,7 +601,7 @@ function viewLib(){
         <button class="mini x" data-del="${c.id}" title="削除">×</button>
       </div>
       ${c.examples.length?`<ul class="ex">${c.examples.map(e=>
-        `<li>${esc(e.en)} <span class="pc">練習 ${playCount(e.en)}回</span>${e.ja?`<span>${esc(e.ja)}</span>`:''}</li>`).join('')}</ul>`:''}
+        `<li>${esc(e.en)} <span class="pc">再生 ${playCount(e.en)}回</span>${e.ja?`<span>${esc(e.ja)}</span>`:''}</li>`).join('')}</ul>`:''}
     </div>`).join('')}</div>
   <p class="note" style="margin-top:14px">チェックを外した型は練習キューから除かれます。遭遇回数が伸びた型ほど、実際の現場でよく使われている表現です。</p>`;
 }
@@ -638,7 +643,7 @@ function viewPlay(){
   const jaOpts = voices.filter(v=>v.lang.toLowerCase().startsWith('ja'));
   return `<div class="stage">${ cur ? `
       <div class="eye"><span class="eyec">${slot(cur.chunk)}</span><span class="tag ${cur.kind}">${KIND[cur.kind]}</span>
-        <span class="count">練習 ${playCount(cur.en)}回</span></div>
+        <span class="count">再生 ${playCount(cur.en)}回</span></div>
       <p class="en">${esc(cur.en)}</p>
       ${settings.jaMode!=='off'&&cur.ja?`<p class="ja">${esc(cur.ja)}</p>`:''}
       <div class="breath"><i id="drain"></i></div>`
@@ -654,7 +659,7 @@ function viewPlay(){
     <div class="f"><span class="l">繰り返し</span>${seg('repeat',[[1,'1'],[2,'2'],[3,'3'],[4,'4'],[5,'5']],settings.repeat)}</div>
     <div class="f"><span class="l">復唱の間</span>${seg('gap',[[0,'なし'],[1.2,'短め'],[1.8,'標準'],[2.5,'長め']],settings.gap)}</div>
     <div class="f"><span class="l">日本語</span>${seg('jaMode',[['show','表示'],['speak','読み上げ'],['off','なし']],settings.jaMode)}</div>
-    <div class="f"><span class="l">順序</span>${seg('shuffle',[[false,'順番'],[true,'シャッフル'],['least','練習が少ない順']],settings.shuffle)}</div>
+    <div class="f"><span class="l">順序</span>${seg('shuffle',[[false,'順番'],[true,'シャッフル'],['least','再生が少ない順']],settings.shuffle)}</div>
     <div class="f"><span class="l">ループ</span>${seg('loop',[[true,'する'],[false,'しない']],settings.loop)}</div>
     <div class="f"><span class="l">英語の声</span><select id="enV">${enOpts.map(v=>
       `<option value="${esc(v.voiceURI)}" ${v.voiceURI===settings.enV?'selected':''}>${esc(v.name)}</option>`).join('')}</select></div>
@@ -664,7 +669,7 @@ function viewPlay(){
   <p class="note" style="margin-top:14px">設定は次の例文から反映されます。琥珀色の線が消えるまでが復唱の間です。画面を消すと再生も止まります。<br>
     「練習範囲」は遭遇回数の多い順に絞り込みます。上位30に絞ると、実際の現場で繰り返し出てきた型だけが回ります。${
       settings.topN ? `いまは ${chunks.filter(c=>c.on).length} 件のうち上位 ${activeChunks().length} 件です。` : ''}<br>
-    「練習が少ない順」にすると、練習回数の少ない例文から回ります。繰り返しを最後まで通した例文が1回と数えられます。</p>`;
+    「再生が少ない順」にすると、これまでの再生回数が少ない例文から回ります。回数は読み上げ1回ごとに増えるので、繰り返しを3回にしていれば1周で3増えます。</p>`;
 }
 
 function viewSet(){
@@ -832,7 +837,7 @@ function bind(){
     if($('doImport')) $('doImport').onclick=()=>$('file').click();
     if($('file')) $('file').onchange=e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); };
     if($('doReset')) $('doReset').onclick=()=>{
-      if(!confirm('保存したチャンクと練習回数をすべて消して初期状態に戻します。よろしいですか？')) return;
+      if(!confirm('保存したチャンクと再生回数をすべて消して初期状態に戻します。よろしいですか？')) return;
       chunks=JSON.parse(JSON.stringify(SEED));
       plays={}; store.set('cm.plays',plays);
       save(); queue=[]; idx=0;
