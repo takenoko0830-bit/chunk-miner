@@ -241,7 +241,7 @@
       "text": "Regarding [X], [Y].",
       "kind": "frame",
       "ja": "〜については、〜",
-      "seen": 1,
+      "seen": 3,
       "examples": [
         {
           "en": "Regarding the respiratory status, we were able to wean him off the ventilator this morning.",
@@ -334,6 +334,146 @@
         {
           "en": "A follow-up chest radiograph is scheduled for after the drain is removed.",
           "ja": "ドレーン抜去後に、フォローの胸部単純写真を予定しています。"
+        }
+      ]
+    },
+    {
+      "text": "On physical examination, [X].",
+      "kind": "frame",
+      "ja": "身体所見では〜",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "On physical examination, he had swelling of the left side of the face and a laceration of the lower lip.",
+          "ja": "身体所見では、顔面左側の腫脹と下口唇の裂創を認めました。"
+        },
+        {
+          "en": "On physical examination, there was no tenderness over the cervical spine.",
+          "ja": "身体所見では、頸椎に圧痛はありませんでした。"
+        },
+        {
+          "en": "On physical examination, the abdomen was distended but soft.",
+          "ja": "身体所見では、腹部は膨満していましたが軟でした。"
+        }
+      ]
+    },
+    {
+      "text": "Since [X], we proceeded with [Y].",
+      "kind": "frame",
+      "ja": "〜だったので、〜に進んだ",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Since he was hemodynamically stable, we proceeded with CT imaging.",
+          "ja": "血行動態が安定していたので、CT撮影に進みました。"
+        },
+        {
+          "en": "Since the bleeding had stopped, we proceeded with conservative management.",
+          "ja": "出血が止まっていたので、保存的加療に進みました。"
+        },
+        {
+          "en": "Since the family had agreed, we proceeded with tracheostomy the following morning.",
+          "ja": "家族の同意が得られたので、翌朝に気管切開に進みました。"
+        }
+      ]
+    },
+    {
+      "text": "[X] showed [Y], consistent with [Z].",
+      "kind": "frame",
+      "ja": "〜で〜を認め、〜に矛盾しない所見だった",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Head CT showed a hyperdense area along the cerebral falx, consistent with traumatic subarachnoid hemorrhage.",
+          "ja": "頭部CTで大脳鎌に沿った高吸収域を認め、外傷性くも膜下出血に矛盾しない所見でした。"
+        },
+        {
+          "en": "The echo showed diffuse hypokinesis, consistent with septic cardiomyopathy.",
+          "ja": "心エコーでびまん性の壁運動低下を認め、敗血症性心筋症に矛盾しない所見でした。"
+        },
+        {
+          "en": "The blood gas showed a wide anion gap, consistent with lactic acidosis.",
+          "ja": "血液ガスでアニオンギャップの開大を認め、乳酸アシドーシスに矛盾しない所見でした。"
+        }
+      ]
+    },
+    {
+      "text": "[X], which makes [Y] difficult.",
+      "kind": "frame",
+      "ja": "〜であり、そのために〜が difficult になっている",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "He is severely hearing impaired, which makes communication difficult.",
+          "ja": "高度の難聴があり、そのために意思疎通が困難です。"
+        },
+        {
+          "en": "She is on high-dose sedation, which makes neurological assessment difficult.",
+          "ja": "高用量の鎮静下にあり、そのために神経学的評価が困難です。"
+        },
+        {
+          "en": "The wound is over a joint, which makes immobilization difficult.",
+          "ja": "創部が関節にかかっており、そのために固定が困難です。"
+        }
+      ]
+    },
+    {
+      "text": "[X] deteriorated to the point where [Y].",
+      "kind": "frame",
+      "ja": "〜が悪化して、〜という段階に至った",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "His respiratory status deteriorated to the point where we were considering tracheostomy.",
+          "ja": "呼吸状態が悪化し、気管切開を検討する段階まで至りました。"
+        },
+        {
+          "en": "Her renal function deteriorated to the point where we started dialysis.",
+          "ja": "腎機能が悪化し、透析を開始する段階まで至りました。"
+        },
+        {
+          "en": "The perfusion deteriorated to the point where we could no longer palpate a pulse.",
+          "ja": "灌流が悪化し、脈が触れなくなる段階まで至りました。"
+        }
+      ]
+    },
+    {
+      "text": "[X] was considered the likely cause.",
+      "kind": "frame",
+      "ja": "〜が原因として最も考えやすいと判断した",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Hypovolemia was considered the likely cause, so fluid resuscitation was started.",
+          "ja": "循環血液量減少が原因として最も考えやすく、輸液蘇生を開始しました。"
+        },
+        {
+          "en": "Aspiration was considered the likely cause of the sudden desaturation.",
+          "ja": "突然の酸素化低下は、誤嚥が原因として最も考えやすいと判断しました。"
+        },
+        {
+          "en": "At that point, a drug reaction was considered the likely cause.",
+          "ja": "その時点では、薬剤反応が原因として最も考えやすいと判断しました。"
+        }
+      ]
+    },
+    {
+      "text": "Our plan was to [V].",
+      "kind": "frame",
+      "ja": "〜する方針とした",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Our plan was to continue fluid resuscitation while gradually reducing dopamine.",
+          "ja": "輸液蘇生を継続しつつ、ドパミンを漸減する方針としました。"
+        },
+        {
+          "en": "Our plan was to extubate him the following morning if the gas remained stable.",
+          "ja": "血液ガスが安定していれば翌朝に抜管する方針としました。"
+        },
+        {
+          "en": "Our plan was to repeat the CT in six hours.",
+          "ja": "6時間後にCTを再検する方針としました。"
         }
       ]
     }
