@@ -241,7 +241,7 @@
       "text": "Regarding [X], [Y].",
       "kind": "frame",
       "ja": "〜については、〜",
-      "seen": 3,
+      "seen": 5,
       "examples": [
         {
           "en": "Regarding the respiratory status, we were able to wean him off the ventilator this morning.",
@@ -461,7 +461,7 @@
       "text": "Our plan was to [V].",
       "kind": "frame",
       "ja": "〜する方針とした",
-      "seen": 1,
+      "seen": 2,
       "examples": [
         {
           "en": "Our plan was to continue fluid resuscitation while gradually reducing dopamine.",
@@ -474,6 +474,166 @@
         {
           "en": "Our plan was to repeat the CT in six hours.",
           "ja": "6時間後にCTを再検する方針としました。"
+        }
+      ]
+    },
+    {
+      "text": "Once [X], we will [V].",
+      "kind": "frame",
+      "ja": "〜になった時点で、〜する",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Once his condition becomes more stable, we will start fluid removal.",
+          "ja": "状態がもう少し安定した時点で、除水を開始します。"
+        },
+        {
+          "en": "Once the cultures come back, we will narrow the antibiotics.",
+          "ja": "培養結果が出た時点で、抗菌薬を de-escalate します。"
+        },
+        {
+          "en": "Once he is off the vasopressors, we will begin mobilization.",
+          "ja": "昇圧薬が切れた時点で、離床を開始します。"
+        }
+      ]
+    },
+    {
+      "text": "[X] seemed to feel that [Y].",
+      "kind": "frame",
+      "ja": "〜は〜と感じているようだった",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "His daughter seemed to feel that further aggressive treatment might not be appropriate.",
+          "ja": "娘さんは、これ以上の積極的治療は適切でないかもしれないと感じているようでした。"
+        },
+        {
+          "en": "The family seemed to feel that he would not have wanted to be on a ventilator.",
+          "ja": "ご家族は、本人は人工呼吸器につながれることを望まなかっただろうと感じているようでした。"
+        },
+        {
+          "en": "The surgeon seemed to feel that a second look was necessary.",
+          "ja": "外科医は、セカンドルック手術が必要だと感じているようでした。"
+        }
+      ]
+    },
+    {
+      "text": "We contacted [X] to confirm whether [Y].",
+      "kind": "frame",
+      "ja": "〜かどうかを確認するため、〜に連絡した",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We contacted the police to confirm whether a postmortem examination would be required.",
+          "ja": "検案が必要かどうかを確認するため、警察に連絡しました。"
+        },
+        {
+          "en": "We contacted the referring hospital to confirm whether he had any advance directives.",
+          "ja": "事前指示があるかどうかを確認するため、紹介元の病院に連絡しました。"
+        },
+        {
+          "en": "We contacted the family to confirm whether they wanted to be present.",
+          "ja": "立ち会いを希望されるかどうかを確認するため、ご家族に連絡しました。"
+        }
+      ]
+    },
+    {
+      "text": "Do you think [X] would be appropriate?",
+      "kind": "frame",
+      "ja": "〜が適切だと思われますか",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Do you think hemorrhagic cerebral infarction would be appropriate as the cause of death?",
+          "ja": "死因として出血性脳梗塞が適切だと思われますか。"
+        },
+        {
+          "en": "Do you think a lower target blood pressure would be appropriate in this case?",
+          "ja": "この症例では、より低い目標血圧が適切だと思われますか。"
+        },
+        {
+          "en": "Do you think transferring him to a general ward would be appropriate at this point?",
+          "ja": "現時点で一般病棟への転棟が適切だと思われますか。"
+        }
+      ]
+    },
+    {
+      "text": "[X] underwent [Y] under [Z].",
+      "kind": "frame",
+      "ja": "〜は〜下に〜を受けた",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "He underwent open reduction and internal fixation under general anesthesia.",
+          "ja": "全身麻酔下に観血的整復固定術を受けました。"
+        },
+        {
+          "en": "She underwent bronchoscopy under sedation at the bedside.",
+          "ja": "鎮静下にベッドサイドで気管支鏡を受けました。"
+        },
+        {
+          "en": "He underwent tracheostomy under local anesthesia in the intensive care unit.",
+          "ja": "ICUで局所麻酔下に気管切開を受けました。"
+        }
+      ]
+    },
+    {
+      "text": "[X] has not yet reached a consensus.",
+      "kind": "frame",
+      "ja": "〜はまだ合意に至っていない",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "The family has not yet reached a consensus.",
+          "ja": "ご家族はまだ合意に至っていません。"
+        },
+        {
+          "en": "The team has not yet reached a consensus on whether to operate.",
+          "ja": "手術するかどうかについて、チームはまだ合意に至っていません。"
+        },
+        {
+          "en": "We have not yet reached a consensus, so we plan to meet again tomorrow.",
+          "ja": "まだ合意に至っていないので、明日もう一度話し合う予定です。"
+        }
+      ]
+    },
+    {
+      "text": "The operative time was [X], and the estimated blood loss was [Y].",
+      "kind": "frame",
+      "ja": "手術時間は〜、出血量は〜であった",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "The operative time was two hours and thirteen minutes, and the estimated blood loss was fifty milliliters.",
+          "ja": "手術時間は2時間13分、出血量は50mLでした。"
+        },
+        {
+          "en": "The operative time was forty minutes, and the estimated blood loss was minimal.",
+          "ja": "手術時間は40分、出血量はごくわずかでした。"
+        },
+        {
+          "en": "The operative time was five hours, and the estimated blood loss was about two liters.",
+          "ja": "手術時間は5時間、出血量は約2Lでした。"
+        }
+      ]
+    },
+    {
+      "text": "have a family meeting",
+      "kind": "colloc",
+      "ja": "家族面談を行う",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We had a family meeting yesterday regarding the goals of care.",
+          "ja": "昨日、治療方針について家族面談を行いました。"
+        },
+        {
+          "en": "We will have a family meeting once the daughter arrives.",
+          "ja": "娘さんが到着した時点で家族面談を行います。"
+        },
+        {
+          "en": "We should have a family meeting before making a decision.",
+          "ja": "決定する前に家族面談を行うべきだと思います。"
         }
       ]
     }
