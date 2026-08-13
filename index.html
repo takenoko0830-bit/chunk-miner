@@ -180,7 +180,20 @@ const SEED = [
 ].map((c,i)=>({...c,id:'s'+i,on:true,seen:1,added:Date.now()+i}));
 
 const KIND={frame:'型',colloc:'語結合',fixed:'定型文'};
-const norm = s => s.toLowerCase().replace(/\[[^\]]*\]/g,'~').replace(/[^a-z~ ]/g,'').replace(/\s+/g,' ').trim();
+/* 正規化キー。小文字化 → スロットを ~ に → 記号除去 → 空白の畳み込み。
+   さらに **時制と数の違いは同じ型として扱う**（2.3 の重複統合を時制違いにも効かせる）。
+   "Our plan was to [V]." と "Our plan is to [V]." は同じ型で、別レコードにすると
+   seen が分散して「よく出る型が浮かび上がる」という指標が働かなくなる。
+
+   正規化するのは be動詞と助動詞だけ。showed/shows のような一般動詞まで機械的に
+   語形を落とすと、意味の違う型どうしが衝突する。置換後の目印は大文字なので、
+   直前の [^a-z~ ] 除去を通ったあとの文字列と混ざらない。 */
+const norm = s => s.toLowerCase()
+  .replace(/\[[^\]]*\]/g,'~').replace(/[^a-z~ ]/g,'').replace(/\s+/g,' ').trim()
+  .replace(/\b(is|are|was|were|am|be|been|being)\b/g,'BE')
+  .replace(/\b(has|have|had|having)\b/g,'HAVE')
+  .replace(/\b(does|do|did|doing)\b/g,'DO')
+  .replace(/\b(will|would)\b/g,'WILL');
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const slot = s => esc(s).replace(/\[([^\]]*)\]/g,'<em>[$1]</em>');
 

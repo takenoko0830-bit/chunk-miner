@@ -2,7 +2,7 @@
    目的は「電波のない移動中でも練習タブが動くこと」だけ。
    ネットワーク優先にしてあるので、デプロイした新版は次回起動時にそのまま反映される。 */
 
-const V = 'cm-v3';
+const V = 'cm-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -33,8 +33,14 @@ self.addEventListener('fetch', e => {
   // Anthropic API と Google Fonts は触らない
   if (new URL(req.url).origin !== location.origin) return;
 
+  /* HTML と chunks.json はブラウザの HTTP キャッシュを迂回して必ず取り直す。
+     ネットワーク優先にしていても、fetch が既定のキャッシュ経路を通ると
+     古い応答が返ることがあり、「デプロイしたのに端末に反映されない」の原因になる。
+     画像やマニフェストは変わらないので通常の経路でよい。 */
+  const fresh = req.mode === 'navigate' || /\/(index\.html|chunks\.json)$/.test(new URL(req.url).pathname);
+
   e.respondWith(
-    fetch(req)
+    fetch(fresh ? new Request(req, {cache:'reload'}) : req)
       .then(res => {
         const copy = res.clone();
         caches.open(V).then(c => c.put(req, copy));
