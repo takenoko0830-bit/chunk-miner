@@ -1,0 +1,166 @@
+{
+  "v": 1,
+  "note": "出所が他と違う。症例プレゼンのように「正しい英語から採取」したものではなく、施設訪問・国際連携の打ち合わせで話者が言おうとして言えなかった機能を特定し、その機能に対する正しい英語の型を書き起こしたもの。元の発話は非母語の話し言葉なのでそのままでは採れない（HANDOVER 8章「素材が最初から正しい英語であれば」の前提を満たさない）。seen=1 は「その機能が1回必要になった」の意味で、その表現が実際の英語に出現した回数ではない。register は施設紹介・意見表明・交渉で、これまでの症例報告にはなかった領域。",
+  "chunks": [
+    {
+      "text": "Strictly speaking, [X] means [Y].",
+      "kind": "frame",
+      "ja": "厳密には、〜とは〜のことである",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Strictly speaking, a hybrid ER means the CT scanner and the angiography suite are in the same room.",
+          "ja": "厳密には、ハイブリッドERとはCTと血管撮影装置が同じ部屋にあることを指します。"
+        },
+        {
+          "en": "Strictly speaking, damage control surgery means stopping the bleeding and deferring the definitive repair.",
+          "ja": "厳密には、ダメージコントロール手術とは止血を優先し根治的修復を先送りすることです。"
+        },
+        {
+          "en": "Strictly speaking, a level one center means it can provide definitive care around the clock.",
+          "ja": "厳密には、レベル1センターとは24時間体制で根治的治療を提供できる施設のことです。"
+        }
+      ]
+    },
+    {
+      "text": "For lack of a better term, [X].",
+      "kind": "frame",
+      "ja": "適当な言い方が見つかりませんが、〜",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "For lack of a better term, we call it a semi-hybrid setup.",
+          "ja": "適当な言い方が見つかりませんが、私たちはこれをセミハイブリッドと呼んでいます。"
+        },
+        {
+          "en": "For lack of a better term, it is a step-down unit rather than a true intensive care unit.",
+          "ja": "適当な言い方が見つかりませんが、本来のICUというよりは準ICUにあたります。"
+        },
+        {
+          "en": "For lack of a better term, the role sits somewhere between a nurse practitioner and a resident.",
+          "ja": "適当な言い方が見つかりませんが、その役割は診療看護師と研修医の中間にあたります。"
+        }
+      ]
+    },
+    {
+      "text": "Personally, I think [X], though [Y] may see it differently.",
+      "kind": "frame",
+      "ja": "個人的には〜だと思いますが、〜は違う見方をするかもしれません",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Personally, I think the current layout works well, though the surgeons may see it differently.",
+          "ja": "個人的には現在のレイアウトで十分だと思いますが、外科は違う見方をするかもしれません。"
+        },
+        {
+          "en": "Personally, I think we should extubate today, though the attending may see it differently.",
+          "ja": "個人的には本日抜管すべきだと思いますが、指導医は違う見方をするかもしれません。"
+        },
+        {
+          "en": "Personally, I think the numbers are too small to draw a conclusion, though the reviewers may see it differently.",
+          "ja": "個人的には結論を出すには症例数が少なすぎると思いますが、査読者は違う見方をするかもしれません。"
+        }
+      ]
+    },
+    {
+      "text": "It's more a matter of [X] than [Y].",
+      "kind": "frame",
+      "ja": "それは〜というより〜の問題である",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "It's more a matter of terminology than substance.",
+          "ja": "それは中身というより用語の問題です。"
+        },
+        {
+          "en": "It's more a matter of staffing than equipment.",
+          "ja": "それは設備というより人員配置の問題です。"
+        },
+        {
+          "en": "It's more a matter of timing than technique.",
+          "ja": "それは手技というよりタイミングの問題です。"
+        }
+      ]
+    },
+    {
+      "text": "[X] is dedicated to [Y].",
+      "kind": "frame",
+      "ja": "〜は〜専用である",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "This CT scanner is dedicated to the emergency department.",
+          "ja": "このCTは救急部門専用です。"
+        },
+        {
+          "en": "Two of the twenty beds are dedicated to burn patients.",
+          "ja": "20床のうち2床は熱傷患者専用です。"
+        },
+        {
+          "en": "The helicopter is dedicated to critical care transport.",
+          "ja": "そのヘリコプターは重症搬送専用です。"
+        }
+      ]
+    },
+    {
+      "text": "The [X]-to-[Y] ratio is [Z].",
+      "kind": "frame",
+      "ja": "〜対〜の比率は〜である",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "The nurse-to-patient ratio is one to two in the critical care beds.",
+          "ja": "重症病床では看護師対患者は1対2です。"
+        },
+        {
+          "en": "The nurse-to-patient ratio is one to four in the sub-critical area.",
+          "ja": "準重症エリアでは看護師対患者は1対4です。"
+        },
+        {
+          "en": "The resident-to-attending ratio is roughly three to one on nights.",
+          "ja": "夜間の研修医対指導医はおよそ3対1です。"
+        }
+      ]
+    },
+    {
+      "text": "We do [X] at the bedside rather than in [Y].",
+      "kind": "frame",
+      "ja": "〜は〜ではなくベッドサイドで行う",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We do tracheostomies at the bedside rather than in the operating room.",
+          "ja": "気管切開は手術室ではなくベッドサイドで行います。"
+        },
+        {
+          "en": "We do bronchoscopy at the bedside rather than in the endoscopy suite.",
+          "ja": "気管支鏡は内視鏡室ではなくベッドサイドで行います。"
+        },
+        {
+          "en": "We do the initial ultrasound at the bedside rather than in the radiology department.",
+          "ja": "初回の超音波検査は放射線科ではなくベッドサイドで行います。"
+        }
+      ]
+    },
+    {
+      "text": "We would need to agree on [X] before [Y].",
+      "kind": "frame",
+      "ja": "〜する前に、〜について合意しておく必要がある",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We would need to agree on the objectives before we take this back to our institutions.",
+          "ja": "それぞれの施設に持ち帰る前に、目的について合意しておく必要があります。"
+        },
+        {
+          "en": "We would need to agree on the length of the rotation before we can accept applicants.",
+          "ja": "応募を受け付ける前に、研修期間について合意しておく必要があります。"
+        },
+        {
+          "en": "We would need to agree on who covers the insurance before the students arrive.",
+          "ja": "学生が到着する前に、保険の負担について合意しておく必要があります。"
+        }
+      ]
+    }
+  ]
+}
