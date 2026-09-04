@@ -125,7 +125,7 @@
       "text": "[X] was able to [V].",
       "kind": "frame",
       "ja": "〜は〜することができた",
-      "seen": 1,
+      "seen": 2,
       "examples": [
         {
           "en": "The patient was able to speak.",
@@ -193,7 +193,7 @@
       "text": "The airway was patent.",
       "kind": "fixed",
       "ja": "気道は開通していた",
-      "seen": 1,
+      "seen": 2,
       "examples": [
         {
           "en": "The airway was patent.",
@@ -241,7 +241,7 @@
       "text": "Regarding [X], [Y].",
       "kind": "frame",
       "ja": "〜については、〜",
-      "seen": 5,
+      "seen": 7,
       "examples": [
         {
           "en": "Regarding the respiratory status, we were able to wean him off the ventilator this morning.",
@@ -794,6 +794,186 @@
         {
           "en": "We would need to agree on who covers the insurance before the students arrive.",
           "ja": "学生が到着する前に、保険の負担について合意しておく必要があります。"
+        }
+      ]
+    },
+    {
+      "text": "[X] showed no [Y].",
+      "kind": "frame",
+      "ja": "〜では〜を認めなかった",
+      "seen": 5,
+      "examples": [
+        {
+          "en": "The chest radiograph showed no pneumothorax or hemothorax.",
+          "ja": "胸部単純写真では気胸も血胸も認めませんでした。"
+        },
+        {
+          "en": "Contrast-enhanced CT showed no active extravasation.",
+          "ja": "造影CTでは活動性の血管外漏出を認めませんでした。"
+        },
+        {
+          "en": "The follow-up blood gas showed no residual metabolic acidosis.",
+          "ja": "再検の血液ガスでは代謝性アシドーシスの遺残を認めませんでした。"
+        }
+      ]
+    },
+    {
+      "text": "[X] could not be ruled out.",
+      "kind": "frame",
+      "ja": "〜を否定できなかった",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Since a skull base fracture could not be ruled out, we accepted the patient at our center.",
+          "ja": "頭蓋底骨折を否定できなかったため、当センターで受け入れました。"
+        },
+        {
+          "en": "Aspiration could not be ruled out, so we started antibiotics empirically.",
+          "ja": "誤嚥を否定できなかったので、経験的に抗菌薬を開始しました。"
+        },
+        {
+          "en": "At that point, an intracranial injury could not be ruled out.",
+          "ja": "その時点では、頭蓋内損傷を否定できませんでした。"
+        }
+      ]
+    },
+    {
+      "text": "We considered [X] unlikely to have been caused by [Y].",
+      "kind": "frame",
+      "ja": "〜が〜によるものとは考えにくいと判断した",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We considered the seizure unlikely to have been caused by an electrolyte abnormality.",
+          "ja": "痙攣が電解質異常によるものとは考えにくいと判断しました。"
+        },
+        {
+          "en": "We considered the fever unlikely to have been caused by the surgical site.",
+          "ja": "発熱が創部によるものとは考えにくいと判断しました。"
+        },
+        {
+          "en": "We considered the desaturation unlikely to have been caused by a pulmonary embolism.",
+          "ja": "酸素化低下が肺塞栓によるものとは考えにくいと判断しました。"
+        }
+      ]
+    },
+    {
+      "text": "After confirming that [X], [Y].",
+      "kind": "frame",
+      "ja": "〜を確認したうえで、〜した",
+      "seen": 2,
+      "examples": [
+        {
+          "en": "After confirming that his airway, breathing, and circulation were stable, we proceeded with CT imaging.",
+          "ja": "気道・呼吸・循環が安定していることを確認したうえで、CT撮影に進みました。"
+        },
+        {
+          "en": "After confirming that the bleeding had stopped, we moved him to the intensive care unit.",
+          "ja": "出血が止まっていることを確認したうえで、ICUに移動しました。"
+        },
+        {
+          "en": "After confirming that the family understood the risks, we took him to the operating room.",
+          "ja": "ご家族がリスクを理解していることを確認したうえで、手術室に搬入しました。"
+        }
+      ]
+    },
+    {
+      "text": "To go back briefly, [X].",
+      "kind": "frame",
+      "ja": "少し話を戻しますが、〜",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "To go back briefly, we had already contacted the stroke team before the patient arrived.",
+          "ja": "少し話を戻しますが、患者到着前にすでに脳卒中チームに連絡していました。"
+        },
+        {
+          "en": "To go back briefly, the initial lactate on arrival was over ten.",
+          "ja": "少し話を戻しますが、来院時の乳酸は10を超えていました。"
+        },
+        {
+          "en": "To go back briefly, he had been started on anticoagulation two weeks earlier.",
+          "ja": "少し話を戻しますが、2週間前から抗凝固薬が開始されていました。"
+        }
+      ]
+    },
+    {
+      "text": "One point I would reconsider is [X].",
+      "kind": "frame",
+      "ja": "一点、考え直したいのは〜です",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "One point I would reconsider is our rationale for securing the airway.",
+          "ja": "一点、考え直したいのは気道確保の根拠です。"
+        },
+        {
+          "en": "One point I would reconsider is the timing of the transfusion.",
+          "ja": "一点、考え直したいのは輸血のタイミングです。"
+        },
+        {
+          "en": "One point I would reconsider is whether the second CT was necessary.",
+          "ja": "一点、考え直したいのは2回目のCTが必要だったかどうかです。"
+        }
+      ]
+    },
+    {
+      "text": "The more important concern was that [X].",
+      "kind": "frame",
+      "ja": "より重要な懸念は〜ということだった",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "The more important concern was that emergency intubation could become extremely difficult.",
+          "ja": "より重要な懸念は、緊急挿管が極めて困難になりうるということでした。"
+        },
+        {
+          "en": "The more important concern was that the swelling might obstruct the airway overnight.",
+          "ja": "より重要な懸念は、腫脹が夜間に気道を閉塞しうるということでした。"
+        },
+        {
+          "en": "The more important concern was that we had no way to monitor him during transport.",
+          "ja": "より重要な懸念は、搬送中にモニタリングする手段がないということでした。"
+        }
+      ]
+    },
+    {
+      "text": "If [X] had been [Y], we would have [V].",
+      "kind": "frame",
+      "ja": "もし〜が〜だったなら、〜していただろう",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "If our main concern had been ongoing bleeding, we would have proceeded with angiography.",
+          "ja": "主たる懸念が出血の継続だったのなら、血管造影に進んでいたはずです。"
+        },
+        {
+          "en": "If the pupils had been unequal on arrival, we would have called the neurosurgeon immediately.",
+          "ja": "来院時に瞳孔不同があったなら、すぐに脳外科を呼んでいたはずです。"
+        },
+        {
+          "en": "If the airway had been secure, we would have delayed the intubation until after the scan.",
+          "ja": "気道が確保されていたなら、撮影後まで挿管を待っていたはずです。"
+        }
+      ]
+    },
+    {
+      "text": "We should have [V].",
+      "kind": "frame",
+      "ja": "〜しておくべきだった",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We should have marked the area of swelling before taking him to the scanner.",
+          "ja": "CTに搬入する前に、腫脹の範囲をマーキングしておくべきでした。"
+        },
+        {
+          "en": "We should have started antibiotics earlier.",
+          "ja": "抗菌薬をもっと早く開始しておくべきでした。"
+        },
+        {
+          "en": "In hindsight, we should have discussed the goals of care with the family sooner.",
+          "ja": "振り返ると、治療方針についてもっと早くご家族と話し合っておくべきでした。"
         }
       ]
     }
