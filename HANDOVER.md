@@ -206,6 +206,11 @@ localStorage キー: `cm.chunks` / `cm.set` / `cm.key` / `cm.model` / `cm.raw` /
   ヘッダだけ出て中身が空の画面になる。`booted` フラグで抑止している。
   **Safari は `getVoices()` が同期で返るため必ず踏む。Chromium 系は読み込み時点で空を返すので
   再現しない** — ブラウザ差で通り抜けるので、この種の初期化順の変更は Safari で確認すること
+- **Wake Lock は再生中だけ保持する**: `run()` の先頭で `holdScreen()`、`stop()` と `run()` の
+  終わりで `freeScreen()`。iOS は画面ロックで `speechSynthesis` を止めるので、自動ロックを
+  抑止して練習が途中で切れるのを防ぐ。**緩和策であって解決ではない**（電源ボタンで消せば止まる）。
+  OS 都合で解除されることがあるので、`release` イベントで参照を捨て、`visibilitychange` で
+  再生中なら取り直す。未対応環境や拒否時は黙って諦める（`request` は握りつぶす）
 - **同期の `seen` は加算しないこと**: `importJSON()` は `hit.seen += (p.seen||1)` と加算するが、
   `syncLibrary()` は `Math.max(ローカル, リモート)` を取る。同期は起動のたびに走るので、
   加算にすると**アプリを開くだけで遭遇回数が際限なく増え、2.3 の指標が壊れる**。

@@ -311,7 +311,31 @@ function build(){
     for(let i=out.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [out[i],out[j]]=[out[j],out[i]]; }
   return out;
 }
-function stop(){ token++; if(window.speechSynthesis) speechSynthesis.cancel(); playing=false; render(); }
+/* 再生中は画面の自動ロックを抑止する。
+   iOS は画面がロックされると speechSynthesis を止めてしまい、途中で練習が切れる。
+   Wake Lock はそれ自体の解決ではなく緩和策（電源ボタンで消せば止まる）だが、
+   放置による自動ロックは防げる。根本解決にはネイティブの背景再生が要る（5章）。
+   未対応の環境やタブが非表示のときは request が失敗するので、黙って諦める。 */
+let wakeLock = null;
+async function holdScreen(){
+  if(!('wakeLock' in navigator) || wakeLock) return;
+  try{
+    wakeLock = await navigator.wakeLock.request('screen');
+    /* OS 側の都合で解除されることがある。参照を捨てて再取得できる状態に戻す */
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  }catch(e){ wakeLock = null; }
+}
+function freeScreen(){
+  if(!wakeLock) return;
+  const w = wakeLock; wakeLock = null;
+  w.release().catch(()=>{});
+}
+/* 他アプリに切り替えると解除されるので、戻ってきて再生中なら取り直す */
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible' && playing) holdScreen();
+});
+
+function stop(){ token++; if(window.speechSynthesis) speechSynthesis.cancel(); playing=false; freeScreen(); render(); }
 
 /* 考える間の長さ。日本語の手がかりのあとに置き、その間は英文を隠す。
    聞いて真似る（シャドーイング）から、自分で引き出す（プロダクション）練習に変わる。 */
@@ -323,6 +347,7 @@ function thinkMs(en){
 
 async function run(start, list){
   const tk = ++token; playing=true; lessonDone=false; lessonPlayed=0;
+  holdScreen();
   const limit = settings.lesson || Infinity;   // 0 は無制限
   let items=list, i=start;
   while(true){
@@ -363,7 +388,7 @@ async function run(start, list){
   }
   /* 次のレッスンはここから続ける。1日に何レッスンやっても同じ場所を繰り返さない */
   idx = items.length ? i % items.length : 0;
-  playing=false; thinking=false; render();
+  playing=false; thinking=false; freeScreen(); render();
 }
 function drain(ms){
   const el=document.getElementById('drain'); if(!el) return;
@@ -730,7 +755,7 @@ function viewPlay(){
     <div class="f"><span class="l">日本語の声</span><select id="jaV">${jaOpts.map(v=>
       `<option value="${esc(v.voiceURI)}" ${v.voiceURI===settings.jaV?'selected':''}>${esc(v.name)}</option>`).join('')}</select></div>
   </div>
-  <p class="note" style="margin-top:14px">設定は次の例文から反映されます。琥珀色の線が消えるまでが復唱の間です。画面を消すと再生も止まります。<br>
+  <p class="note" style="margin-top:14px">設定は次の例文から反映されます。琥珀色の線が消えるまでが復唱の間です。<b>再生中は画面が自動で消えません</b>（対応端末のみ）。ただし電源ボタンで消すと再生も止まります。<br>
     「練習範囲」は遭遇回数の多い順に絞り込みます。上位30に絞ると、実際の現場で繰り返し出てきた型だけが回ります。${
       settings.topN ? `いまは ${chunks.filter(c=>c.on).length} 件のうち上位 ${activeChunks().length} 件です。` : ''}<br>
     順序の「少ない順」にすると、これまでの再生回数が少ない例文から回ります。回数は読み上げ1回ごとに増えるので、繰り返しを3回にしていれば1周で3増えます。<br>
