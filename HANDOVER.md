@@ -42,10 +42,25 @@
 という指標が働かなくなる。プレゼンでは過去形（経過報告）と現在形（今後の方針）を両方使うので、
 この分散は実際に起きる。
 
-`norm()` が正規化するのは **be動詞と助動詞だけ**（is/are/was/were/am/be/been/being → BE、
-has/have/had/having → HAVE、does/do/did/doing → DO、will/would → WILL）。
-showed/shows のような一般動詞まで機械的に語形を落とすと、意味の違う型どうしが衝突する。
-統合された型には両方の時制の例文がぶら下がるが、練習としてはむしろ好ましい。
+**限定詞の違いも同じ型として扱う（2026-09-08 決定）。** `His airway was patent.` と
+`The airway was patent.` は同じ型。
+
+`norm()` が触るのは次の2つだけ。
+
+- **冠詞と所有格を落とす**: a / an / the / his / her / their / its / our / your / my
+- **be動詞と助動詞を正規化**: is,are,was,were,am,be,been,being → BE ／ has,have,had,having → HAVE ／
+  does,do,did,doing → DO ／ will,would → WILL
+
+**触らないもの、およびその理由:**
+
+- **no / this / that / these / those** — 意味を担う。`showed no [Y]` の no が消えると肯定と否定が
+  同じキーになる
+- **前置詞（in / of など）** — 意味を変えることがある。`abnormalities in` と `abnormalities of` は
+  同じ型に見えるが、機械的に落とすと別の型どうしが衝突しうる
+- **一般動詞（showed / shows など）** — 語形を機械的に落とすと意味の違う型が衝突する
+
+統合された型には複数の時制・限定詞の例文がぶら下がるが、練習としてはむしろ好ましい。
+**この種の拡張をするときは、必ず既存の全チャンクで衝突が起きないかを先に確認すること。**
 
 **理由:** 症例プレゼンを10本入れれば同じ型が8回出てくる。毎回別レコードにすると崩壊する。統合すれば逆に「よく出る型」が自動で浮かび上がり、`seen` 降順が**まず固めるべき30個**のリストになる。この指標がこのアプリの本質的な価値。
 
