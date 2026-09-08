@@ -317,13 +317,24 @@ function build(){
    放置による自動ロックは防げる。根本解決にはネイティブの背景再生が要る（5章）。
    未対応の環境やタブが非表示のときは request が失敗するので、黙って諦める。 */
 let wakeLock = null;
+/* 取得できたかを画面に出す。黙って失敗すると、実機で効かないときに原因が分からない。
+   iOS はバージョンや起動方法（Safari / ホーム画面アプリ）で挙動が違う */
+let wakeState = 'まだ試していません';
 async function holdScreen(){
-  if(!('wakeLock' in navigator) || wakeLock) return;
+  if(!('wakeLock' in navigator)){ wakeState = 'この端末は非対応'; if(booted) render(); return; }
+  if(wakeLock) return;
   try{
     wakeLock = await navigator.wakeLock.request('screen');
+    wakeState = '有効';
     /* OS 側の都合で解除されることがある。参照を捨てて再取得できる状態に戻す */
-    wakeLock.addEventListener('release', () => { wakeLock = null; });
-  }catch(e){ wakeLock = null; }
+    wakeLock.addEventListener('release', () => {
+      wakeLock = null;
+      if(playing){ wakeState = 'OS に解除されました'; if(booted) render(); }
+    });
+  }catch(e){ wakeLock = null; wakeState = '拒否されました（' + (e && e.name ? e.name : 'unknown') + '）'; }
+  /* holdScreen は非同期なので、呼び出し元の render() より後に結果が出る。
+     状態が確定した時点で描き直さないと、画面に1回前の状態が残る */
+  if(booted) render();
 }
 function freeScreen(){
   if(!wakeLock) return;
@@ -760,6 +771,7 @@ function viewPlay(){
       settings.topN ? `いまは ${chunks.filter(c=>c.on).length} 件のうち上位 ${activeChunks().length} 件です。` : ''}<br>
     順序の「少ない順」にすると、これまでの再生回数が少ない例文から回ります。回数は読み上げ1回ごとに増えるので、繰り返しを3回にしていれば1周で3増えます。<br>
     <b>考える間</b>を置くと、日本語のあいだに英文が伏せられます。自分で言ってみてから正解を聞く練習になります。聞いて真似るだけより、口から出る英語は増えます。日本語を「なし」にしているときは手がかりがないので働きません。<br>
+    画面ロックの抑止: <b>${esc(wakeState)}</b>。iOS は画面がロックされると読み上げを止めるため、再生中だけ自動ロックを抑えています。電源ボタンで消した場合は止まります。<br>
     <b>レッスン</b>は決めた文数で区切ります。終わったら「次のレッスン」で続きから始まるので、同じ範囲を繰り返しません。1日に何レッスンやっても構いません。</p>`;
 }
 
