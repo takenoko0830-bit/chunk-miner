@@ -1,0 +1,186 @@
+{
+  "v": 1,
+  "note": "seen は「この英文に出てきた回数」。chunks.json に統合するときに既存の値へ加算する",
+  "chunks": [
+    {
+      "text": "Regarding [X], [Y].",
+      "kind": "frame",
+      "ja": "〜については、〜",
+      "seen": 2,
+      "examples": []
+    },
+    {
+      "text": "[X] showed no [Y].",
+      "kind": "frame",
+      "ja": "〜では〜を認めなかった",
+      "seen": 2,
+      "examples": []
+    },
+    {
+      "text": "After confirming that [X], [Y].",
+      "kind": "frame",
+      "ja": "〜を確認したうえで、〜した",
+      "seen": 1,
+      "examples": []
+    },
+    {
+      "text": "On initial assessment, [X].",
+      "kind": "frame",
+      "ja": "初期評価では〜であった",
+      "seen": 1,
+      "examples": []
+    },
+    {
+      "text": "[X] has remained [Y].",
+      "kind": "frame",
+      "ja": "〜は〜のまま推移している",
+      "seen": 4,
+      "examples": [
+        {
+          "en": "He has remained hemodynamically stable without any arrhythmic events.",
+          "ja": "不整脈イベントなく、血行動態は安定したまま推移しています。"
+        },
+        {
+          "en": "His ejection fraction has remained preserved at around fifty percent.",
+          "ja": "駆出率は50%前後で保たれたまま推移しています。"
+        },
+        {
+          "en": "Her urine output has remained adequate since the second day.",
+          "ja": "2日目以降、尿量は十分なまま推移しています。"
+        }
+      ]
+    },
+    {
+      "text": "[X] suddenly developed [Y] while [V].",
+      "kind": "frame",
+      "ja": "〜は〜している最中に突然〜を発症した",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "The patient suddenly developed severe back pain while cleaning machinery at a factory.",
+          "ja": "工場で機械を清掃している最中に、突然強い背部痛を発症しました。"
+        },
+        {
+          "en": "He suddenly developed left-sided weakness while walking to the station.",
+          "ja": "駅に向かって歩いている最中に、突然左半身の脱力を発症しました。"
+        },
+        {
+          "en": "She suddenly developed dyspnea while receiving the second unit of blood.",
+          "ja": "2単位目の輸血を受けている最中に、突然呼吸困難を発症しました。"
+        }
+      ]
+    },
+    {
+      "text": "Because we were concerned about [X], we prepared for [Y].",
+      "kind": "frame",
+      "ja": "〜を懸念したため、〜に備えて準備した",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Because we were concerned about impending cardiac arrest, we prepared for emergency pericardial drainage.",
+          "ja": "切迫した心停止を懸念したため、緊急心嚢ドレナージに備えて準備しました。"
+        },
+        {
+          "en": "Because we were concerned about airway obstruction, we prepared for a surgical airway at the bedside.",
+          "ja": "気道閉塞を懸念したため、ベッドサイドでの外科的気道確保に備えて準備しました。"
+        },
+        {
+          "en": "Because we were concerned about massive bleeding, we prepared for a rapid transfusion protocol.",
+          "ja": "大量出血を懸念したため、大量輸血プロトコルに備えて準備しました。"
+        }
+      ]
+    },
+    {
+      "text": "There was a significant difference in [X] between [Y].",
+      "kind": "frame",
+      "ja": "〜に〜の間で有意な差を認めた",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "There was a significant difference in blood pressure between the two arms.",
+          "ja": "左右の上肢間で血圧に明らかな差を認めました。"
+        },
+        {
+          "en": "There was a significant difference in oxygen saturation between the upper and lower extremities.",
+          "ja": "上肢と下肢の間で酸素飽和度に明らかな差を認めました。"
+        },
+        {
+          "en": "There was a significant difference in outcome between the two groups.",
+          "ja": "両群間で転帰に有意な差を認めました。"
+        }
+      ]
+    },
+    {
+      "text": "There appeared to be only [X], without evidence of [Y].",
+      "kind": "frame",
+      "ja": "〜のみで、〜を示す所見はないように見えた",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "There appeared to be only trivial regurgitation, without evidence of severe valvular disease.",
+          "ja": "ごく軽度の逆流のみで、高度の弁膜症を示す所見はないように見えました。"
+        },
+        {
+          "en": "There appeared to be only mild swelling, without evidence of compartment syndrome.",
+          "ja": "軽度の腫脹のみで、コンパートメント症候群を示す所見はないように見えました。"
+        },
+        {
+          "en": "There appeared to be only a small effusion, without evidence of tamponade.",
+          "ja": "少量の液体貯留のみで、タンポナーデを示す所見はないように見えました。"
+        }
+      ]
+    },
+    {
+      "text": "Based on these findings, we diagnosed [X].",
+      "kind": "frame",
+      "ja": "これらの所見から、〜と診断した",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Based on these findings, we diagnosed acute aortic dissection and immediately consulted cardiovascular surgery.",
+          "ja": "これらの所見から急性大動脈解離と診断し、直ちに心臓血管外科にコンサルトしました。"
+        },
+        {
+          "en": "Based on these findings, we diagnosed septic shock secondary to cholangitis.",
+          "ja": "これらの所見から、胆管炎に続発した敗血症性ショックと診断しました。"
+        },
+        {
+          "en": "Based on these findings, we diagnosed a hypertensive intracerebral hemorrhage.",
+          "ja": "これらの所見から、高血圧性脳出血と診断しました。"
+        }
+      ]
+    },
+    {
+      "text": "We will begin [X] at our usual rate of [Y].",
+      "kind": "frame",
+      "ja": "当院の通常の速度である〜で、〜を開始する",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "We will begin rewarming at our usual rate of one degree Celsius per day.",
+          "ja": "当院の通常の速度である1日1℃で、復温を開始します。"
+        },
+        {
+          "en": "We will begin weaning at our usual rate of two micrograms per kilogram per minute every hour.",
+          "ja": "当院の通常の速度である毎時2γずつで、漸減を開始します。"
+        },
+        {
+          "en": "We will begin feeding at our usual rate of twenty milliliters per hour.",
+          "ja": "当院の通常の速度である毎時20mLで、経腸栄養を開始します。"
+        }
+      ]
+    },
+    {
+      "text": "Do you have any additional comments or suggestions?",
+      "kind": "fixed",
+      "ja": "何か補足やご助言はありますか",
+      "seen": 1,
+      "examples": [
+        {
+          "en": "Do you have any additional comments or suggestions?",
+          "ja": "何か補足やご助言はありますか。"
+        }
+      ]
+    }
+  ]
+}
