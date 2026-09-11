@@ -334,6 +334,36 @@ async function loadAudioIndex(){
     const d = await r.json();
     audioIndex = { en:new Set(d.en||[]), ja:new Set(d.ja||[]), silenceMs:d.silenceMs||500 };
   }catch(e){ audioIndex = null; }
+  await refreshAudioMatch();
+}
+
+/* どの例文に音声があるかを先に出しておく。
+   再生時の遅延計算に任せると、状態表示が実態とずれる。
+   **同期でチャンクが増えたあとにも呼ぶこと** — 起動直後は初期データしか
+   手元にないので、そこで数えると実際よりずっと少なく出る。 */
+let audioHave = new Set();
+async function refreshAudioMatch(){
+  audioHave = new Set();
+  if(audioIndex){
+    for(const c of chunks) for(const e of c.examples){
+      if(e.en && audioIndex.en.has(await hashOf(e.en))) audioHave.add(e.en);
+      if(e.ja) await hashOf(e.ja);        // 再生時に使うのでここで出しておく
+    }
+  }
+  if(booted) render();
+}
+
+/* 音声まわりの状態を1行にまとめる。実機で「変」と言われたときに、
+   ファイル再生なのか読み上げなのか、無音が効いているのかを切り分けられるように。 */
+function audioStatus(){
+  if(!audioEl) return 'この端末では音声ファイルを扱えません';
+  if(!audioIndex) return '音声ファイルなし（すべて読み上げ）';
+  const q = queue.length ? queue : build();
+  const total = q.length;
+  const withFile = q.filter(it => audioHave.has(it.en)).length;
+  const sil = silenceOk === false ? '無音が使えないため通常の待機' :
+              silenceOk === true  ? '無音のループ再生あり' : '無音は未確認';
+  return `音声ファイル ${withFile} / ${total} 文（残りは読み上げ）・${sil}`;
 }
 
 async function hashOf(text){
@@ -353,9 +383,35 @@ function playFile(url, capMs){
                         audioEl.onended = audioEl.onerror = null; res(); };
     audioEl.onended = fin; audioEl.onerror = fin;
     const t = setTimeout(fin, capMs || 20000);
-    try{ audioEl.src = url; const p = audioEl.play(); if(p && p.catch) p.catch(fin); }
+    try{ audioEl.loop = false; audioEl.src = url;
+         const p = audioEl.play(); if(p && p.catch) p.catch(fin); }
     catch(e){ fin(); }
   });
+}
+
+/* 間のあいだ無音を「ループ再生」しておく。
+   短い無音を何度も鳴らし直す作りにしていたが、1回でも再生に失敗すると
+   onerror で即座に次へ進み、間が丸ごと消える（iOS で実際に起きた）。
+   ループなら JS は関与しないので、失敗しようがない。長さの誤差も出ない。
+   目的は「音を止めないこと」— 鳴っているあいだは iOS がタイマーを絞らないので、
+   間の計測は普通の setTimeout で足りる。 */
+let silenceOk = null;                 // null=未判定 / false=この端末では使えない
+function startSilence(){
+  return new Promise(res => {
+    if(!audioEl) return res(false);
+    try{
+      audioEl.onended = audioEl.onerror = null;
+      audioEl.loop = true;
+      audioEl.src = 'audio/silence.wav';
+      const p = audioEl.play();
+      if(p && p.then) p.then(() => res(true), () => res(false));
+      else res(true);
+    }catch(e){ res(false); }
+  });
+}
+function stopSilence(){
+  if(!audioEl) return;
+  try{ audioEl.pause(); audioEl.loop = false; }catch(e){}
 }
 
 /* 音声ファイルがあればそれを、なければ読み上げを使う */
@@ -368,14 +424,16 @@ async function say(text, lang, voice){
   return speak(text, lang, settings.rate, voice);
 }
 
-/* 間を無音の再生で埋める。音声ファイルを使っていないときは従来どおり待つだけ */
+/* 間を無音のループ再生で埋める。
+   無音が使えない端末では普通に待つだけにする。**間が消えるより鳴り続けないほうがまし。** */
 async function quiet(ms, tk){
-  if(!audioIndex || ms <= 0) return wait(ms, tk);
-  const n = Math.max(1, Math.round(ms / audioIndex.silenceMs));
-  for(let i = 0; i < n; i++){
-    if(tk !== token) return;
-    await playFile('audio/silence.wav', audioIndex.silenceMs + 2000);
-  }
+  if(ms <= 0) return;
+  if(!audioIndex || silenceOk === false) return wait(ms, tk);
+  const ok = await startSilence();
+  if(!ok){ silenceOk = false; return wait(ms, tk); }
+  silenceOk = true;
+  await wait(ms, tk);
+  stopSilence();
 }
 
 /* ロック画面に曲名と操作を出す */
@@ -693,6 +751,7 @@ async function syncLibrary(){
   if(add || up){ save(); queue=[]; idx=0; }
   syncMsg = {add, up};
   render();
+  if(add || up) refreshAudioMatch();   // 増えたチャンクぶんを数え直す
 }
 
 /* ================= 描画 ================= */
@@ -858,6 +917,7 @@ function viewPlay(){
       settings.topN ? `いまは ${chunks.filter(c=>c.on).length} 件のうち上位 ${activeChunks().length} 件です。` : ''}<br>
     順序の「少ない順」にすると、これまでの再生回数が少ない例文から回ります。回数は読み上げ1回ごとに増えるので、繰り返しを3回にしていれば1周で3増えます。<br>
     <b>考える間</b>を置くと、日本語のあいだに英文が伏せられます。自分で言ってみてから正解を聞く練習になります。聞いて真似るだけより、口から出る英語は増えます。日本語を「なし」にしているときは手がかりがないので働きません。<br>
+    再生: <b>${esc(audioStatus())}</b>。<br>
     画面ロックの抑止: <b>${esc(wakeState)}</b>。iOS は画面がロックされると読み上げを止めるため、再生中だけ自動ロックを抑えています。電源ボタンで消した場合は止まります。<br>
     <b>レッスン</b>は決めた文数で区切ります。終わったら「次のレッスン」で続きから始まるので、同じ範囲を繰り返しません。1日に何レッスンやっても構いません。</p>`;
 }
