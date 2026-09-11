@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>背景再生テスト</title>
+<style>
+  body{background:#0E1524;color:#F1EEE7;font-family:-apple-system,'Hiragino Sans',sans-serif;
+       margin:0;padding:24px;line-height:1.8}
+  h1{font-size:17px;letter-spacing:.05em;margin:0 0 4px}
+  p{font-size:14px;color:#8496B2;margin:0 0 18px}
+  audio{width:100%;margin:8px 0 20px}
+  ol{font-size:14px;padding-left:20px}
+  li{margin-bottom:10px}
+  b{color:#E9A63C}
+  .box{border:1px solid #26324C;background:#162034;border-radius:6px;padding:16px;margin-top:20px}
+  #log{font-size:12px;color:#8496B2;white-space:pre-wrap;margin-top:10px}
+</style>
+</head>
+<body>
+
+<h1>背景再生テスト</h1>
+<p>1つの長い音声ファイル（32秒）を、画面を消しても鳴らし続けられるかだけを見ます。</p>
+
+<audio id="a" controls preload="auto" src="bgtest.m4a"></audio>
+
+<ol>
+  <li><b>再生</b>を押す。「ワン、ツー、スリー…」と40まで数えます</li>
+  <li>数字が5あたりまで進んだら、<b>電源ボタンで画面を消す</b></li>
+  <li>そのまま耳を澄ます</li>
+</ol>
+
+<div class="box">
+  <b>40まで数え切ったら</b> → 成功。いまのアプリの作りが悪いだけなので直せます<br>
+  <b>画面を消した瞬間に止まったら</b> → Web ではここが限界。ネイティブ化が要ります<br>
+  <div id="log">まだ再生していません</div>
+</div>
+
+<script>
+/* 止まった位置が分かるように、再生位置と状態だけ記録する。
+   画面を消しているあいだは JS が止まる可能性があるので、
+   戻ってきたときに「どこまで進んだか」を見るための記録。 */
+const a = document.getElementById('a'), log = document.getElementById('log');
+let last = 0, marks = [];
+const show = () => log.textContent =
+  `再生位置 ${a.currentTime.toFixed(1)} 秒 / 全 ${(a.duration||0).toFixed(1)} 秒\n` + marks.join('\n');
+a.addEventListener('timeupdate', () => { last = a.currentTime; show(); });
+a.addEventListener('play',  () => { marks.push('再生開始'); show(); });
+a.addEventListener('pause', () => { marks.push(`一時停止 @ ${a.currentTime.toFixed(1)}秒`); show(); });
+a.addEventListener('ended', () => { marks.push('最後まで再生できた'); show(); });
+document.addEventListener('visibilitychange', () => {
+  marks.push(`${document.visibilityState === 'hidden' ? '画面が隠れた' : '画面に戻った'} @ ${last.toFixed(1)}秒`);
+  show();
+});
+</script>
+</body>
+</html>
